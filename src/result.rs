@@ -19,6 +19,12 @@ pub enum OpenCliError {
     
     #[error("Not found: {0}")]
     NotFound(Cow<'static, str>),
+    
+    #[error("TOML parse error: {0}")]
+    TomlParse(#[from] toml::de::Error),
+    
+    #[error("TOML serialize error: {0}")]
+    TomlSerialize(#[from] toml::ser::Error),
 }
 
 // Static error constants

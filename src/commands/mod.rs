@@ -124,6 +124,9 @@ impl CommandExecutor {
             PackageAction::List => {
                 manager.list_packages().await
             },
+            PackageAction::Check => {
+                manager.check_packages().await
+            },
             PackageAction::Update { package, all } => {
                 if all {
                     manager.install_all_packages().await

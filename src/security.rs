@@ -45,4 +45,13 @@ impl SecurityManager {
             Err(_) => Ok(false),
         }
     }
+    
+    pub async fn hash_file_content(&self, content_hash: &[u8]) -> Result<String> {
+        let salt = SaltString::generate(&mut OsRng);
+        let argon2_hash = self.argon2
+            .hash_password(content_hash, &salt)
+            .map_err(|e| OpenCliError::Process(format!("Failed to hash content: {}", e).into()))?;
+        
+        Ok(argon2_hash.to_string())
+    }
 }

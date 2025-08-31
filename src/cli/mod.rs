@@ -90,6 +90,9 @@ pub enum PackageAction {
     #[command(about = "List installed packages")]
     List,
     
+    #[command(about = "Check package integrity")]
+    Check,
+    
     #[command(about = "Update package")]
     Update {
         #[arg(help = "Package to update (owner/repo)")]
