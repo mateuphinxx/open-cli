@@ -16,7 +16,7 @@ CLI tool for open.mp server management and Pawn project building.
 ## Installation
 
 ```bash
-git clone https://github.com/mateuphinx/open-cli
+git clone https://github.com/mateuphinxx/open-cli
 cd open-cli
 cargo build --release
 ```
@@ -104,6 +104,6 @@ All OpenCLI files are stored in your system's config directory:
 
 ## License
 
-MIT License - Copyright (c) 2025 Mattias Theodore "mateuphinx" Bartholomew
+MIT License - Copyright (c) 2025 Mattias Theodore "mateuphinxx" Bartholomew
 
 See [LICENSE](LICENSE) for details.

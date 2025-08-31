@@ -49,7 +49,7 @@ impl SetupCommand {
     }
     
     async fn download_config(&self) -> Result<String> {
-        const CONFIG_URL: &str = "https://gist.githubusercontent.com/mateuphinx/b34896b41090c7a8c93bdbe2df811be1/raw/opencli.toml";
+        const CONFIG_URL: &str = "https://gist.githubusercontent.com/mateuphinxx/b34896b41090c7a8c93bdbe2df811be1/raw/opencli.toml";
         
         let client = reqwest::Client::new();
         let response = client

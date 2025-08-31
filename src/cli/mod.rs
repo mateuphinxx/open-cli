@@ -8,7 +8,7 @@ use clap::Parser;
 #[command(name = "opencli")]
 #[command(about = "CLI tool for open.mp server management")]
 #[command(version = "0.1.0")]
-#[command(author = "mateuphinx")]
+#[command(author = "mateuphinxx")]
 #[command(arg_required_else_help = true)]
 #[command(help_template = "{before-help}{name} {version}\n{author-with-newline}{about-with-newline}\n{usage-heading} {usage}\n\n{all-args}{after-help}")]
 pub struct Cli {

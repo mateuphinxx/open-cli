@@ -2,7 +2,7 @@
 name = "opencli"
 version = "0.1.0"
 edition = "2021"
-authors = ["mateuphinx"]
+authors = ["mateuphinxx"]
 description = "CLI tool for open.mp server management"
 license = "MIT"
 
