@@ -43,7 +43,6 @@ wildcards = "allow"
 highlight = "all"
 
 deny = [
-    # Known security vulnerabilities
     { name = "openssl", version = "*" },
     { name = "openssl-sys", version = "*" },
 ]
@@ -56,7 +55,6 @@ skip = [
 ]
 
 skip-tree = [
-    # Skip entire dependency trees for some crates
     { name = "windows-sys" },
 ]
 
@@ -68,7 +66,6 @@ unmaintained = "warn"
 yanked = "deny"
 notice = "warn"
 ignore = [
-    # Ignore specific advisories if needed
 ]
 
 [sources]
