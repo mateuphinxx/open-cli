@@ -127,7 +127,7 @@ impl PackageDownloader {
         }
     }
     
-    pub async fn download_package(&self, repo: &str, release: &GitHubRelease, temp_dir: &Path) -> Result<PackageFiles> {
+    pub async fn download_package(&self, repo: &str, release: &GitHubRelease, temp_dir: &Path, target: Option<&crate::build::config::PackageTarget>) -> Result<PackageFiles> {
         create_dir_all(temp_dir).await?;
         
         let mut package_files = PackageFiles {
@@ -143,7 +143,7 @@ impl PackageDownloader {
             self.download_asset(asset, &asset_path).await?;
             
             if self.is_archive(&asset.name) {
-                let extracted = self.extract_archive(&asset_path, temp_dir).await?;
+                let extracted = self.extract_archive(&asset_path, temp_dir, target).await?;
                 package_files.includes.extend(extracted.includes);
                 package_files.binaries.extend(extracted.binaries);
                 package_files.root_binaries.extend(extracted.root_binaries);
@@ -199,15 +199,15 @@ impl PackageDownloader {
         Ok(())
     }
     
-    async fn extract_archive(&self, archive_path: &Path, extract_dir: &Path) -> Result<PackageFiles> {
+    async fn extract_archive(&self, archive_path: &Path, extract_dir: &Path, target: Option<&crate::build::config::PackageTarget>) -> Result<PackageFiles> {
         let file_name = archive_path.file_name()
             .and_then(|n| n.to_str())
             .unwrap_or("");
         
         if file_name.ends_with(".zip") {
-            self.extract_zip(archive_path, extract_dir).await
+            self.extract_zip(archive_path, extract_dir, target).await
         } else if file_name.ends_with(".tar.gz") || file_name.ends_with(".tgz") {
-            self.extract_tar_gz(archive_path, extract_dir).await
+            self.extract_tar_gz(archive_path, extract_dir, target).await
         } else {
             Ok(PackageFiles {
                 includes: Vec::new(),
@@ -219,24 +219,20 @@ impl PackageDownloader {
         }
     }
     
-    async fn extract_zip(&self, zip_path: &Path, extract_dir: &Path) -> Result<PackageFiles> {
+    async fn extract_zip(&self, zip_path: &Path, extract_dir: &Path, target: Option<&crate::build::config::PackageTarget>) -> Result<PackageFiles> {
         let file = std::fs::File::open(zip_path)?;
         let mut archive = ZipArchive::new(file)
             .map_err(|e| OpenCliError::Process(format!("Invalid ZIP archive: {}", e).into()))?;
         
-        let mut package_files = PackageFiles {
-            includes: Vec::new(),
-            binaries: Vec::new(),
-            root_binaries: Vec::new(),
-            component_binaries: Vec::new(),
-            plugin_binaries: Vec::new(),
-        };
+        let mut all_files = Vec::new();
+        let mut archive_structure = Vec::new();
         
         for i in 0..archive.len() {
             let mut file = archive.by_index(i)
                 .map_err(|e| OpenCliError::Process(format!("ZIP extraction error: {}", e).into()))?;
             
             let file_path = extract_dir.join(file.name());
+            archive_structure.push(file.name().to_string());
             
             if file.is_dir() {
                 create_dir_all(&file_path).await?;
@@ -251,37 +247,32 @@ impl PackageDownloader {
                     .map_err(|e| OpenCliError::Process(format!("ZIP read error: {}", e).into()))?;
                 output.write_all(&buffer).await?;
                 
-                if INCLUDE_REGEX.is_match(file.name()) {
-                    package_files.includes.push(file_path);
-                } else if BINARY_REGEX.is_match(file.name()) {
-                    self.categorize_binary_by_path(&file_path, file.name(), &mut package_files);
-                }
+                all_files.push((file_path, file.name().to_string()));
             }
         }
         
-        Ok(package_files)
+        Ok(self.filter_files_by_target(all_files, archive_structure, target))
     }
     
-    async fn extract_tar_gz(&self, tar_path: &Path, extract_dir: &Path) -> Result<PackageFiles> {
+    async fn extract_tar_gz(&self, tar_path: &Path, extract_dir: &Path, target: Option<&crate::build::config::PackageTarget>) -> Result<PackageFiles> {
         let file = std::fs::File::open(tar_path)?;
         let decoder = GzDecoder::new(file);
         let mut archive = Archive::new(decoder);
         
-        let mut package_files = PackageFiles {
-            includes: Vec::new(),
-            binaries: Vec::new(),
-            root_binaries: Vec::new(),
-            component_binaries: Vec::new(),
-            plugin_binaries: Vec::new(),
-        };
+        let mut all_files = Vec::new();
+        let mut archive_structure = Vec::new();
         
         for entry in archive.entries()
             .map_err(|e| OpenCliError::Process(format!("TAR extraction error: {}", e).into()))? {
             let mut entry = entry
                 .map_err(|e| OpenCliError::Process(format!("TAR entry error: {}", e).into()))?;
             
-            let file_path = extract_dir.join(entry.path()
-                .map_err(|e| OpenCliError::Process(format!("TAR path error: {}", e).into()))?);
+            let entry_path = entry.path()
+                .map_err(|e| OpenCliError::Process(format!("TAR path error: {}", e).into()))?;
+            let file_path = extract_dir.join(&entry_path);
+            let entry_path_string = entry_path.to_str().unwrap_or("").to_string();
+            
+            archive_structure.push(entry_path_string.clone());
             
             if entry.header().entry_type().is_file() {
                 if let Some(parent) = file_path.parent() {
@@ -294,19 +285,129 @@ impl PackageDownloader {
                     .map_err(|e| OpenCliError::Process(format!("TAR read error: {}", e).into()))?;
                 output.write_all(&buffer).await?;
                 
+                all_files.push((file_path, entry_path_string));
+            }
+        }
+        
+        Ok(self.filter_files_by_target(all_files, archive_structure, target))
+    }
+    
+    fn filter_files_by_target(&self, all_files: Vec<(PathBuf, String)>, archive_structure: Vec<String>, target: Option<&crate::build::config::PackageTarget>) -> PackageFiles {
+        let mut package_files = PackageFiles {
+            includes: Vec::new(),
+            binaries: Vec::new(),
+            root_binaries: Vec::new(),
+            component_binaries: Vec::new(),
+            plugin_binaries: Vec::new(),
+        };
+        
+        if let Some(target) = target {
+            match target {
+                crate::build::config::PackageTarget::Components => {
+                    let has_component_folder = archive_structure.iter().any(|path| {
+                        let path_lower = path.to_lowercase();
+                        path_lower.contains("/components/") || path_lower.contains("\\components\\") ||
+                        path_lower.contains("/component/") || path_lower.contains("\\component\\")
+                    });
+                    
+                    let has_qawno_folder = archive_structure.iter().any(|path| {
+                        let path_lower = path.to_lowercase();
+                        path_lower.contains("/qawno/includes/") || path_lower.contains("\\qawno\\includes\\") ||
+                        path_lower.contains("/qawno/include/") || path_lower.contains("\\qawno\\include\\") ||
+                        path_lower.contains("/qawno/") || path_lower.contains("\\qawno\\")
+                    });
+                    
+                    for (file_path, archive_path) in all_files {
+                        let archive_path_lower = archive_path.to_lowercase();
+                        
+                        if let Some(file_name) = file_path.file_name().and_then(|n| n.to_str()) {
+                            if INCLUDE_REGEX.is_match(file_name) {
+                                if has_qawno_folder {
+                                    if archive_path_lower.contains("/qawno/includes/") || archive_path_lower.contains("\\qawno\\includes\\") ||
+                                       archive_path_lower.contains("/qawno/include/") || archive_path_lower.contains("\\qawno\\include\\") ||
+                                       archive_path_lower.contains("/qawno/") || archive_path_lower.contains("\\qawno\\") {
+                                        package_files.includes.push(file_path);
+                                    }
+                                } else {
+                                    package_files.includes.push(file_path);
+                                }
+                            } else if BINARY_REGEX.is_match(file_name) {
+                                if AMX_LIB_REGEX.is_match(file_name) {
+                                    package_files.root_binaries.push(file_path);
+                                } else if has_component_folder {
+                                    if archive_path_lower.contains("/components/") || archive_path_lower.contains("\\components\\") ||
+                                       archive_path_lower.contains("/component/") || archive_path_lower.contains("\\component\\") {
+                                        package_files.component_binaries.push(file_path);
+                                    }
+                                } else {
+                                    package_files.component_binaries.push(file_path);
+                                }
+                            }
+                        }
+                    }
+                }
+                crate::build::config::PackageTarget::Plugins => {
+                    let has_plugin_folder = archive_structure.iter().any(|path| {
+                        let path_lower = path.to_lowercase();
+                        path_lower.contains("/plugins/") || path_lower.contains("\\plugins\\")
+                    });
+                    
+                    let has_pawno_folder = archive_structure.iter().any(|path| {
+                        let path_lower = path.to_lowercase();
+                        path_lower.contains("/pawno/") || path_lower.contains("\\pawno\\")
+                    });
+                    
+                    for (file_path, archive_path) in all_files {
+                        let archive_path_lower = archive_path.to_lowercase();
+                        
+                        if let Some(file_name) = file_path.file_name().and_then(|n| n.to_str()) {
+                            if INCLUDE_REGEX.is_match(file_name) {
+                                if has_pawno_folder {
+                                    if archive_path_lower.contains("/pawno/") || archive_path_lower.contains("\\pawno\\") {
+                                        package_files.includes.push(file_path);
+                                    }
+                                } else {
+                                    package_files.includes.push(file_path);
+                                }
+                            } else if BINARY_REGEX.is_match(file_name) {
+                                if AMX_LIB_REGEX.is_match(file_name) {
+                                    package_files.root_binaries.push(file_path);
+                                } else if has_plugin_folder {
+                                    if archive_path_lower.contains("/plugins/") || archive_path_lower.contains("\\plugins\\") {
+                                        package_files.plugin_binaries.push(file_path);
+                                    }
+                                } else {
+                                    package_files.plugin_binaries.push(file_path);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (file_path, archive_path) in all_files {
                 if let Some(file_name) = file_path.file_name().and_then(|n| n.to_str()) {
                     if INCLUDE_REGEX.is_match(file_name) {
                         package_files.includes.push(file_path);
                     } else if BINARY_REGEX.is_match(file_name) {
-                        let entry_path = entry.path()
-                            .map_err(|e| OpenCliError::Process(format!("TAR path error: {}", e).into()))?;
-                        self.categorize_binary_by_path(&file_path, entry_path.to_str().unwrap_or(""), &mut package_files);
+                        self.categorize_binary_by_path(&file_path, &archive_path, &mut package_files);
                     }
                 }
             }
         }
         
-        Ok(package_files)
+        package_files.includes.sort();
+        package_files.includes.dedup();
+        package_files.binaries.sort();
+        package_files.binaries.dedup();
+        package_files.root_binaries.sort();
+        package_files.root_binaries.dedup();
+        package_files.component_binaries.sort();
+        package_files.component_binaries.dedup();
+        package_files.plugin_binaries.sort();
+        package_files.plugin_binaries.dedup();
+        
+        package_files
     }
     
     async fn download_repo_content(&self, repo: &str, tag: &str, temp_dir: &Path, package_files: &mut PackageFiles) -> Result<()> {

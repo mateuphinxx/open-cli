@@ -57,7 +57,7 @@ impl PackageManager {
         
         spinner.set_message("Downloading package files...");
         let temp_dir = self.get_temp_dir(repo)?;
-        let package_files = self.downloader.download_package(repo, &release, &temp_dir).await?;
+        let package_files = self.downloader.download_package(repo, &release, &temp_dir, target.as_ref()).await?;
         
         spinner.set_message("Installing package files...");
         let installed_files = self.install_package_files(repo, &package_files, target.as_ref()).await?;
@@ -272,7 +272,7 @@ impl PackageManager {
         let workspace_info = self.workspace.get_workspace_info();
         
         for include_file in &package_files.includes {
-            for include_path in &include_paths {
+            if let Some(include_path) = include_paths.first() {
                 let dest_path = include_path.join(include_file.file_name().unwrap());
                 fs::copy(include_file, &dest_path).await?;
                 installed_files.push(dest_path.clone());
@@ -327,6 +327,8 @@ impl PackageManager {
             }
         }
         
+        installed_files.sort();
+        installed_files.dedup();
         Ok(installed_files)
     }
     
