@@ -1,5 +1,5 @@
 # OpenCLI
-CLI tool for open.mp server management and Pawn project building withpackage management system.
+CLI tool for open.mp server management and Pawn project building with package management system.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
