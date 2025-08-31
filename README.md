@@ -118,7 +118,7 @@ args = ["-d3", "-;+", "-(+", "-\\+", "-Z+", "-O2"]
 opencli install compiler
 
 # Install specific version
-opencli install compiler --version v3.10.12
+opencli install compiler --version v3.10.11
 
 # Force reinstall
 opencli install compiler --force
