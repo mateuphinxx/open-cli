@@ -26,11 +26,7 @@ static BINARY_REGEX: Lazy<Regex> = Lazy::new(|| {
 });
 
 static AMX_LIB_REGEX: Lazy<Regex> = Lazy::new(|| {
-<<<<<<< HEAD
-    Regex::new(r"[Aa][Mm][Xx]|[Ll][Ii][Bb]").unwrap()
-=======
     Regex::new(r"[Aa][Mm][Xx]|[Ll][Ii][Bb]|[Ll][Oo][Gg]-[Cc][Oo][Rr][Ee]").unwrap()
->>>>>>> 56e6e5d (update)
 });
 
 pub struct PackageDownloader {
