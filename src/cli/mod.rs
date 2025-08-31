@@ -50,6 +50,12 @@ pub enum Commands {
         #[command(subcommand)]
         component: InstallComponent,
     },
+    
+    #[command(about = "Package management commands")]
+    Package {
+        #[command(subcommand)]
+        action: PackageAction,
+    },
 }
 
 #[derive(Parser)]
@@ -61,6 +67,36 @@ pub enum InstallComponent {
         
         #[arg(long, help = "Force reinstall even if already exists")]
         force: bool,
+    },
+}
+
+#[derive(Parser)]
+pub enum PackageAction {
+    #[command(about = "Install packages")]
+    Install {
+        #[arg(help = "Package to install (owner/repo or owner/repo=version)")]
+        package: Option<String>,
+        
+        #[arg(long, help = "Target folder (components or plugins)")]
+        target: Option<String>,
+    },
+    
+    #[command(about = "Remove package")]
+    Remove {
+        #[arg(help = "Package to remove (owner/repo)")]
+        package: String,
+    },
+    
+    #[command(about = "List installed packages")]
+    List,
+    
+    #[command(about = "Update package")]
+    Update {
+        #[arg(help = "Package to update (owner/repo)")]
+        package: Option<String>,
+        
+        #[arg(long, help = "Update all packages")]
+        all: bool,
     },
 }
 
@@ -88,6 +124,9 @@ impl Cli {
                         executor.install_compiler(version, force).await
                     }
                 }
+            },
+            Commands::Package { action } => {
+                executor.handle_package_action(action).await
             },
         }
     }

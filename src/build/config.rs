@@ -2,11 +2,13 @@ use serde::{Deserialize, Serialize};
 use crate::result::{Result, OpenCliError};
 use tokio::fs;
 use std::path::PathBuf;
-// use smol_str::SmolStr;
+use std::collections::HashMap;
+use smol_str::SmolStr;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BuildConfig {
     pub build: Build,
+    pub packages: Option<HashMap<SmolStr, PackageSpec>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -26,6 +28,23 @@ pub struct BuildIncludes {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BuildArgs {
     pub args: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum PackageSpec {
+    Simple(SmolStr),
+    Detailed {
+        version: SmolStr,
+        target: Option<PackageTarget>,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PackageTarget {
+    Components,
+    Plugins,
 }
 
 impl Default for BuildConfig {
@@ -52,6 +71,7 @@ impl Default for BuildConfig {
                     ],
                 }),
             },
+            packages: None,
         }
     }
 }
@@ -87,5 +107,58 @@ impl BuildConfig {
         }
         
         Ok(())
+    }
+    
+    pub fn add_package(&mut self, name: SmolStr, spec: PackageSpec) {
+        if self.packages.is_none() {
+            self.packages = Some(HashMap::new());
+        }
+        self.packages.as_mut().unwrap().insert(name, spec);
+    }
+    
+    pub fn remove_package(&mut self, name: &str) -> bool {
+        if let Some(packages) = &mut self.packages {
+            packages.remove(name).is_some()
+        } else {
+            false
+        }
+    }
+    
+    pub fn get_packages(&self) -> Option<&HashMap<SmolStr, PackageSpec>> {
+        self.packages.as_ref()
+    }
+    
+    pub fn get_include_paths(&self) -> Vec<PathBuf> {
+        self.build.includes
+            .as_ref()
+            .map(|inc| inc.paths.clone())
+            .unwrap_or_default()
+    }
+}
+
+impl PackageSpec {
+    pub fn version(&self) -> &str {
+        match self {
+            PackageSpec::Simple(version) => version,
+            PackageSpec::Detailed { version, .. } => version,
+        }
+    }
+    
+    pub fn target(&self) -> Option<&PackageTarget> {
+        match self {
+            PackageSpec::Simple(_) => None,
+            PackageSpec::Detailed { target, .. } => target.as_ref(),
+        }
+    }
+    
+    pub fn new_simple(version: impl Into<SmolStr>) -> Self {
+        PackageSpec::Simple(version.into())
+    }
+    
+    pub fn new_detailed(version: impl Into<SmolStr>, target: Option<PackageTarget>) -> Self {
+        PackageSpec::Detailed {
+            version: version.into(),
+            target,
+        }
     }
 }

@@ -2,7 +2,6 @@ use opencli::cli::Cli;
 use opencli::result::Result;
 use clap::Parser;
 use std::fs::OpenOptions;
-use std::io::Write;
 use log::LevelFilter;
 use env_logger::Builder;
 use dirs::config_dir;

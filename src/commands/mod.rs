@@ -4,6 +4,7 @@ pub mod setup;
 pub mod install;
 
 use crate::result::Result;
+use crate::cli::PackageAction;
 use smol_str::SmolStr;
 
 #[derive(Debug)]
@@ -84,5 +85,55 @@ impl CommandExecutor {
             version: version.map(|s| s.into()), 
             force 
         }.execute().await
+    }
+    
+    pub async fn handle_package_action(&mut self, action: PackageAction) -> Result<()> {
+        use crate::package::PackageManager;
+        use crate::build::PackageTarget;
+        
+        let workspace_root = std::env::current_dir()?;
+        let config_path = workspace_root.join("opencli.toml");
+        let mut manager = PackageManager::new(&workspace_root, &config_path);
+        
+        match action {
+            PackageAction::Install { package, target } => {
+                if let Some(package_spec) = package {
+                    let (repo, version) = if let Some(pos) = package_spec.find('=') {
+                        let repo_part = &package_spec[..pos];
+                        let version_part = &package_spec[pos + 1..];
+                        let clean_version = version_part.trim_matches('"').trim_matches('\'');
+                        (repo_part, Some(clean_version))
+                    } else {
+                        (package_spec.as_str(), None)
+                    };
+                    
+                    let target_type = target.as_deref().and_then(|t| match t.to_lowercase().as_str() {
+                        "components" => Some(PackageTarget::Components),
+                        "plugins" => Some(PackageTarget::Plugins),
+                        _ => None,
+                    });
+                    
+                    manager.install_package(repo, version, target_type).await
+                } else {
+                    manager.install_all_packages().await
+                }
+            },
+            PackageAction::Remove { package } => {
+                manager.remove_package(&package).await
+            },
+            PackageAction::List => {
+                manager.list_packages().await
+            },
+            PackageAction::Update { package, all } => {
+                if all {
+                    manager.install_all_packages().await
+                } else if let Some(repo) = package {
+                    manager.update_package(&repo).await
+                } else {
+                    println!("Specify a package to update or use --all");
+                    Ok(())
+                }
+            },
+        }
     }
 }

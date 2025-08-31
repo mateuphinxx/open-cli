@@ -6,3 +6,4 @@ pub mod build;
 pub mod compiler;
 pub mod security;
 pub mod cache;
+pub mod package;
