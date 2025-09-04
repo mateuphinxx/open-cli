@@ -1,6 +1,6 @@
 use crate::result::{Result, OpenCliError};
 use crate::build::{BuildConfig, PackageSpec, PackageTarget};
-use crate::package::{PackageDownloader, VersionConstraint, WorkspaceDetector, PackageLock};
+use crate::package::{PackageDownloader, VersionConstraint, WorkspaceDetector, PackageLock, ConfigManager};
 use crate::security::SecurityManager;
 use crate::cache::CacheManager;
 use std::path::{Path, PathBuf};
@@ -13,6 +13,7 @@ pub struct PackageManager {
     workspace: WorkspaceDetector,
     security: SecurityManager,
     cache: CacheManager,
+    config_manager: ConfigManager,
     config_path: PathBuf,
     lock_path: PathBuf,
 }
@@ -28,6 +29,7 @@ impl PackageManager {
             workspace: WorkspaceDetector::new(&workspace_root),
             security: SecurityManager::new(),
             cache: CacheManager::new(workspace_path),
+            config_manager: ConfigManager::new(workspace_path),
             config_path: config_path_buf,
             lock_path,
         }
@@ -91,6 +93,9 @@ impl PackageManager {
         spinner.set_message("Updating configuration...");
         self.update_config(repo, &release.tag_name, target).await?;
         
+        spinner.set_message("Updating config.json...");
+        self.config_manager.update_legacy_plugins(&self.lock_path).await?;
+        
         self.cleanup_temp_dir(&temp_dir).await?;
         
         spinner.finish_with_message(format!("Successfully installed {} {}", repo, release.tag_name));
@@ -153,6 +158,9 @@ impl PackageManager {
         
         spinner.set_message("Updating configuration...");
         self.remove_from_config(repo).await?;
+        
+        spinner.set_message("Updating config.json...");
+        self.config_manager.remove_legacy_plugin(repo, &self.lock_path).await?;
         
         spinner.finish_with_message(format!("Successfully removed {}", repo));
         log::info!("Package removed: {}", repo);

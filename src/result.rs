@@ -25,6 +25,9 @@ pub enum OpenCliError {
     
     #[error("TOML serialize error: {0}")]
     TomlSerialize(#[from] toml::ser::Error),
+    
+    #[error("JSON error: {0}")]
+    JsonError(#[from] serde_json::Error),
 }
 
 // Static error constants
