@@ -134,7 +134,9 @@ impl PackageManager {
         
         spinner.set_message("Removing package files...");
         let removed_package = lock.get_package(repo).cloned();
-        self.remove_package_files(repo).await?;
+        if let Some(package) = &removed_package {
+            self.remove_package_files_from_lock(&package.files).await?;
+        }
         
         spinner.set_message("Updating cache...");
         if let Some(package) = &removed_package {
@@ -246,13 +248,16 @@ impl PackageManager {
     
     pub async fn update_package(&mut self, repo: &str) -> Result<()> {
         let config = BuildConfig::from_file(self.config_path.to_string_lossy().as_ref()).await?;
+        let lock = PackageLock::load_from_file(&self.lock_path).await?;
         
         if let Some(packages) = config.get_packages() {
             if let Some(spec) = packages.get(repo) {
                 let _constraint = VersionConstraint::parse(spec.version())?;
                 let target = spec.target().cloned();
                 
-                self.remove_package_files(repo).await?;
+                if let Some(package) = lock.get_package(repo) {
+                    self.remove_package_files_from_lock(&package.files).await?;
+                }
                 self.install_package(repo, Some(spec.version()), target).await?;
             } else {
                 return Err(OpenCliError::NotFound(format!("Package {} not found", repo).into()));
@@ -353,42 +358,20 @@ impl PackageManager {
         Ok(argon2_hash)
     }
     
-    async fn remove_package_files(&self, repo: &str) -> Result<()> {
-        let package_name = repo.split('/').last().unwrap_or(repo);
-        
-        let include_paths = self.get_include_paths().await?;
-        for include_path in include_paths {
-            let _pattern = format!("{}*.inc", package_name.to_lowercase());
-            if let Ok(entries) = fs::read_dir(&include_path).await {
-                let mut entries = entries;
-                while let Some(entry) = entries.next_entry().await? {
-                    let file_name = entry.file_name();
-                    if let Some(name_str) = file_name.to_str() {
-                        if name_str.to_lowercase().contains(&package_name.to_lowercase()) && name_str.ends_with(".inc") {
-                            fs::remove_file(entry.path()).await?;
-                            log::info!("Removed include: {}", entry.path().display());
-                        }
-                    }
-                }
+    async fn remove_package_files_from_lock(&self, files: &[smol_str::SmolStr]) -> Result<()> {
+        for file_path in files {
+            let path = std::path::Path::new(file_path.as_str());
+            if path.exists() {
+                fs::remove_file(path).await.map_err(|e| {
+                    log::warn!("Failed to remove file {}: {}", path.display(), e);
+                    e
+                })?;
+                log::info!("Removed file: {}", path.display());
+                println!("Removed: {}", path.display());
+            } else {
+                log::warn!("File not found (already removed?): {}", path.display());
             }
         }
-        
-        let workspace_info = self.workspace.get_workspace_info();
-        for folder in [&workspace_info.components, &workspace_info.plugins] {
-            if let Ok(entries) = fs::read_dir(folder).await {
-                let mut entries = entries;
-                while let Some(entry) = entries.next_entry().await? {
-                    let file_name = entry.file_name();
-                    if let Some(name_str) = file_name.to_str() {
-                        if name_str.to_lowercase().contains(&package_name.to_lowercase()) {
-                            fs::remove_file(entry.path()).await?;
-                            log::info!("Removed binary: {}", entry.path().display());
-                        }
-                    }
-                }
-            }
-        }
-        
         Ok(())
     }
     

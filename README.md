@@ -163,7 +163,7 @@ opencli setup
 
 # 2. Install dependencies
 opencli package install Y-Less/sscanf
-opencli package install maddinat0r/mysql --target components
+opencli package install pBlueG/SA-MP-MySQL --target plugins
 
 # 3. Build project (includes automatically available)
 opencli build
