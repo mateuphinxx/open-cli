@@ -6,7 +6,6 @@ use std::path::{Path, PathBuf};
 use tokio::fs;
 
 pub struct ConfigManager {
-    workspace_root: PathBuf,
     config_path: PathBuf,
 }
 
@@ -14,7 +13,6 @@ impl ConfigManager {
     pub fn new(workspace_root: &Path) -> Self {
         let config_path = workspace_root.join("config.json");
         Self {
-            workspace_root: workspace_root.to_path_buf(),
             config_path,
         }
     }
@@ -123,16 +121,6 @@ impl ConfigManager {
             .collect()
     }
 
-    fn string_to_plugin_array(&self, existing: &str) -> Vec<Value> {
-        let plugins: Vec<String> = if existing.contains(',') {
-            existing.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()
-        } else {
-            existing.split_whitespace().map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()
-        };
-        
-        self.strings_to_json_array(&plugins)
-    }
-
     fn merge_plugin_arrays(&self, existing_array: &[Value], new_plugins: &[String]) -> Vec<Value> {
         let mut existing_plugins: Vec<String> = existing_array
             .iter()
@@ -151,7 +139,7 @@ impl ConfigManager {
         self.strings_to_json_array(&existing_plugins)
     }
 
-    pub async fn remove_legacy_plugin_advanced(&self, repo: &str, package: &crate::package::InstalledPackage) -> Result<()> {
+    pub async fn remove_legacy_plugin_advanced(&self, _repo: &str, package: &crate::package::InstalledPackage) -> Result<()> {
         if !self.config_path.exists() {
             return Ok(());
         }
