@@ -152,15 +152,19 @@ impl PackageManager {
             }
         }
         
+        spinner.set_message("Updating config.json...");
+        if let Some(package) = &removed_package {
+            if let Some(PackageTarget::Plugins) = &package.target {
+                self.config_manager.remove_legacy_plugin_advanced(repo, package).await?;
+            }
+        }
+        
         spinner.set_message("Updating lock file...");
         lock.remove_package(repo);
         lock.save_to_file(&self.lock_path).await?;
         
         spinner.set_message("Updating configuration...");
         self.remove_from_config(repo).await?;
-        
-        spinner.set_message("Updating config.json...");
-        self.config_manager.remove_legacy_plugin(repo, &self.lock_path).await?;
         
         spinner.finish_with_message(format!("Successfully removed {}", repo));
         log::info!("Package removed: {}", repo);

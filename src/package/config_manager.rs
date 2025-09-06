@@ -50,13 +50,26 @@ impl ConfigManager {
 
     fn extract_binary_name_from_path(&self, file_path: &str) -> Option<String> {
         let path = std::path::Path::new(file_path);
+        let path_str = path.to_string_lossy().to_lowercase();
+        
         if let Some(file_name) = path.file_name().and_then(|n| n.to_str()) {
-            if file_name.ends_with(".dll") || file_name.ends_with(".so") {
-                if path.to_string_lossy().contains("plugins") {
-                    return Some(file_name.trim_end_matches(".dll").trim_end_matches(".so").to_string());
+            let file_name_lower = file_name.to_lowercase();
+            
+            if file_name_lower.ends_with(".dll") || file_name_lower.ends_with(".so") || file_name_lower.ends_with(".dylib") {
+                let is_plugin = path_str.contains("plugins") || path_str.contains("plugin");
+                let is_not_root_special = !path_str.contains("amx") && !path_str.contains("lib") && !path_str.contains("log-core");
+                
+                if is_plugin && is_not_root_special {
+                    let base_name = file_name
+                        .trim_end_matches(".dll")
+                        .trim_end_matches(".so")
+                        .trim_end_matches(".dylib");
+                    
+                    return Some(base_name.to_string());
                 }
             }
         }
+        
         None
     }
 
@@ -71,24 +84,27 @@ impl ConfigManager {
             .unwrap_or_else(|_| serde_json::Value::Object(Map::new()));
 
         if let Value::Object(ref mut map) = config {
-            if let Some(existing) = map.get("legacy_plugins") {
-                if let Some(existing_array) = existing.as_array() {
-                    let updated = self.merge_plugin_arrays(existing_array, legacy_plugins);
-                    map.insert("legacy_plugins".to_string(), Value::Array(updated));
-                    println!("Updated config.json");
-                } else if let Some(existing_str) = existing.as_str() {
-                    let existing_plugins = self.string_to_plugin_array(existing_str);
-                    let updated = self.merge_plugin_arrays(&existing_plugins, legacy_plugins);
-                    map.insert("legacy_plugins".to_string(), Value::Array(updated));
-                    println!("Updated config.json");
+            let pawn = map.entry("pawn").or_insert_with(|| {
+                serde_json::json!({
+                    "legacy_plugins": [],
+                    "main_scripts": [],
+                    "side_scripts": []
+                })
+            });
+            
+            if let Value::Object(ref mut pawn_map) = pawn {
+                if let Some(existing) = pawn_map.get("legacy_plugins") {
+                    if let Some(existing_array) = existing.as_array() {
+                        let updated = self.merge_plugin_arrays(existing_array, legacy_plugins);
+                        pawn_map.insert("legacy_plugins".to_string(), Value::Array(updated));
+                    } else {
+                        let plugins_array = self.strings_to_json_array(legacy_plugins);
+                        pawn_map.insert("legacy_plugins".to_string(), Value::Array(plugins_array));
+                    }
                 } else {
                     let plugins_array = self.strings_to_json_array(legacy_plugins);
-                    map.insert("legacy_plugins".to_string(), Value::Array(plugins_array));
-                    println!("Updated config.json");
+                    pawn_map.insert("legacy_plugins".to_string(), Value::Array(plugins_array));
                 }
-            } else {
-                let plugins_array = self.strings_to_json_array(legacy_plugins);
-                map.insert("legacy_plugins".to_string(), Value::Array(plugins_array));
                 println!("Updated config.json");
             }
         }
@@ -135,59 +151,54 @@ impl ConfigManager {
         self.strings_to_json_array(&existing_plugins)
     }
 
-    pub async fn remove_legacy_plugin(&self, repo: &str, lock_path: &Path) -> Result<()> {
+    pub async fn remove_legacy_plugin_advanced(&self, repo: &str, package: &crate::package::InstalledPackage) -> Result<()> {
         if !self.config_path.exists() {
             return Ok(());
         }
 
-        let lock = PackageLock::load_from_file(lock_path).await?;
         let mut plugins_to_remove = Vec::new();
         
-        if let Some(package) = lock.installed.get(repo) {
-            if let Some(PackageTarget::Plugins) = &package.target {
-                for file_path in &package.files {
-                    if let Some(binary_name) = self.extract_binary_name_from_path(file_path) {
-                        plugins_to_remove.push(binary_name);
-                    }
-                }
+        for file_path in &package.files {
+            if let Some(binary_name) = self.extract_binary_name_from_path(file_path) {
+                plugins_to_remove.push(binary_name);
             }
         }
 
         if plugins_to_remove.is_empty() {
             return Ok(());
         }
-
+        
         let config_content = fs::read_to_string(&self.config_path).await?;
         let mut config: Value = serde_json::from_str(&config_content)
             .unwrap_or_else(|_| serde_json::Value::Object(Map::new()));
 
+        let mut config_updated = false;
+        
         if let Value::Object(ref mut map) = config {
-            if let Some(existing) = map.get("legacy_plugins") {
-                if let Some(existing_array) = existing.as_array() {
-                    let updated = self.remove_plugins_from_array(existing_array, &plugins_to_remove);
-                    if updated.is_empty() {
-                        map.remove("legacy_plugins");
-                    } else {
-                        map.insert("legacy_plugins".to_string(), Value::Array(updated));
+            if let Some(pawn) = map.get_mut("pawn") {
+                if let Value::Object(ref mut pawn_map) = pawn {
+                    if let Some(existing) = pawn_map.get("legacy_plugins").cloned() {
+                        if let Some(existing_array) = existing.as_array() {
+                            let before_count = existing_array.len();
+                            let updated = self.remove_plugins_from_array(existing_array, &plugins_to_remove);
+                            let after_count = updated.len();
+                            
+                            if after_count != before_count {
+                                config_updated = true;
+                                pawn_map.insert("legacy_plugins".to_string(), Value::Array(updated));
+                            }
+                        }
                     }
-                    println!("Updated config.json");
-                } else if let Some(existing_str) = existing.as_str() {
-                    let existing_plugins = self.string_to_plugin_array(existing_str);
-                    let updated = self.remove_plugins_from_array(&existing_plugins, &plugins_to_remove);
-                    if updated.is_empty() {
-                        map.remove("legacy_plugins");
-                    } else {
-                        map.insert("legacy_plugins".to_string(), Value::Array(updated));
-                    }
-                    println!("Updated config.json");
                 }
             }
         }
 
-        let formatted_json = serde_json::to_string_pretty(&config)?;
-        fs::write(&self.config_path, formatted_json).await?;
-        
-        log::info!("Removed legacy plugins from config.json: {}", plugins_to_remove.join(", "));
+        if config_updated {
+            let formatted_json = serde_json::to_string_pretty(&config)?;
+            fs::write(&self.config_path, formatted_json).await?;
+            println!("Updated config.json");
+            log::info!("Removed legacy plugins from config.json: {}", plugins_to_remove.join(", "));
+        }
         
         Ok(())
     }
