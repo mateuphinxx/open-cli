@@ -185,7 +185,7 @@ opencli run
 
 ## Requirements
 
-- Rust 1.75+
+- Rust 1.89.0+
 - Internet connection (first time setup)
 - open.mp server binary (for running servers)
 

@@ -1,4 +1,4 @@
-FROM rust:1.75-slim AS builder
+FROM rust:1.89.0-slim AS builder
 
 WORKDIR /app
 
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
 COPY Cargo.toml ./
 COPY src ./src
 
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN cargo build --release
 
 FROM debian:bookworm-slim AS runtime
@@ -29,7 +30,7 @@ WORKDIR /home/opencli
 
 ENTRYPOINT ["opencli"]
 
-FROM rust:1.75-slim AS development
+FROM rust:1.89.0-slim AS development
 
 WORKDIR /workspace
 
@@ -41,6 +42,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN cargo install cargo-watch
 
 ENTRYPOINT ["bash"]
