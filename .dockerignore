@@ -15,7 +15,6 @@ Thumbs.db
 opencli.log
 cache.txt
 opencli.lock
-!Cargo.lock
 artifacts/
 test-scenarios/
 examples/
