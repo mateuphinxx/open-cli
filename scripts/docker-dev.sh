@@ -4,29 +4,29 @@ set -e
 
 case "$1" in
     "dev")
-        docker-compose up dev
+        docker compose up dev
         ;;
     "build")
-        docker-compose up build
+        docker compose up build
         ;;
     "test")
-        docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+        docker compose -f docker-compose.test.yml up --abort-on-container-exit
         ;;
     "ci")
-        docker-compose -f docker-compose.ci.yml up --abort-on-container-exit
+        docker compose -f docker-compose.ci.yml up --abort-on-container-exit
         ;;
     "demo")
-        docker-compose up demo
+        docker compose up demo
         ;;
     "clean")
-        docker-compose down -v
+        docker compose down -v
         docker system prune -f
         ;;
     "shell")
-        docker-compose run --rm dev bash
+        docker compose run --rm dev bash
         ;;
     "watch")
-        docker-compose run --rm dev cargo watch -x check -x test
+        docker compose run --rm dev cargo watch -x check -x test
         ;;
     *)
         echo "Usage: $0 {dev|build|test|ci|demo|clean|shell|watch}"

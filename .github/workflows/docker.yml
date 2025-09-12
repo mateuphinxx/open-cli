@@ -22,10 +22,10 @@ jobs:
           ./scripts/setup-test-scenarios.sh
       
       - name: Run CI pipeline
-        run: docker-compose -f docker-compose.ci.yml up --abort-on-container-exit
+        run: docker compose -f docker-compose.ci.yml up --abort-on-container-exit
       
       - name: Run test suite
-        run: docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+        run: docker compose -f docker-compose.test.yml up --abort-on-container-exit
 
   build:
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
       - name: Build release artifacts
         run: |
           mkdir -p artifacts
-          docker-compose -f docker-compose.ci.yml run --rm build-release
+          docker compose -f docker-compose.ci.yml run --rm build-release
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

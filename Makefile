@@ -41,23 +41,23 @@ ci:
 	cargo build --release
 
 docker-build:
-	docker-compose build
+	docker compose build
 
 docker-test:
 	chmod +x scripts/setup-test-scenarios.sh
 	./scripts/setup-test-scenarios.sh
-	docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+	docker compose -f docker-compose.test.yml up --abort-on-container-exit
 
 docker-ci:
-	docker-compose -f docker-compose.ci.yml up --abort-on-container-exit
+	docker compose -f docker-compose.ci.yml up --abort-on-container-exit
 
 docker-demo:
-	docker-compose up demo
+	docker compose up demo
 
 docker-clean:
-	docker-compose down -v
-	docker-compose -f docker-compose.ci.yml down -v
-	docker-compose -f docker-compose.test.yml down -v
+	docker compose down -v
+	docker compose -f docker-compose.ci.yml down -v
+	docker compose -f docker-compose.test.yml down -v
 	docker system prune -f
 
 setup-tests:
@@ -65,10 +65,10 @@ setup-tests:
 	./scripts/setup-test-scenarios.sh
 
 watch:
-	docker-compose run --rm dev cargo watch -x check -x test
+	docker compose run --rm dev cargo watch -x check -x test
 
 shell:
-	docker-compose run --rm dev bash
+	docker compose run --rm dev bash
 
 release: clean build
 	strip target/release/opencli
