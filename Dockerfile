@@ -9,12 +9,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY Cargo.toml ./
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo fetch
-RUN cargo build --release && rm -rf src
-
 COPY src ./src
-RUN touch src/main.rs && cargo build --release
+
+RUN cargo build --release
 
 FROM debian:bookworm-slim AS runtime
 
