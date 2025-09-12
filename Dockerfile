@@ -1,4 +1,4 @@
-FROM rust:1.70-slim AS builder
+FROM rust:1.75-slim AS builder
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ WORKDIR /home/opencli
 
 ENTRYPOINT ["opencli"]
 
-FROM rust:1.70-slim AS development
+FROM rust:1.75-slim AS development
 
 WORKDIR /workspace
 
