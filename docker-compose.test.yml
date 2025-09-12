@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   test-package-install:
     build:
@@ -86,7 +84,7 @@ services:
         opencli setup --force &&
         opencli install compiler &&
         opencli package install 'Y-Less/sscanf=^2.13.0' --target components &&
-        opencli package install 'pBlueG/SA-MP-MySQL=~R41-4' --target components &&
+        opencli package install 'pBlueG/SA-MP-MySQL=~R41-4' --target plugins &&
         opencli package list &&
         opencli package check
       "

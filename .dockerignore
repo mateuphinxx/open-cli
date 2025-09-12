@@ -14,7 +14,7 @@ node_modules/
 Thumbs.db
 opencli.log
 cache.txt
-*.lock
+opencli.lock
 !Cargo.lock
 artifacts/
 test-scenarios/

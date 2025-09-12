@@ -1,4 +1,4 @@
-FROM rust:1.70-slim as builder
+FROM rust:1.70-slim AS builder
 
 WORKDIR /app
 
@@ -8,14 +8,15 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
+COPY Cargo.lock* ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release && rm -rf src
 
 COPY src ./src
 RUN touch src/main.rs && cargo build --release
 
-FROM debian:bookworm-slim as runtime
+FROM debian:bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
@@ -31,7 +32,7 @@ WORKDIR /home/opencli
 
 ENTRYPOINT ["opencli"]
 
-FROM rust:1.70-slim as development
+FROM rust:1.70-slim AS development
 
 WORKDIR /workspace
 
@@ -47,7 +48,7 @@ RUN cargo install cargo-watch
 
 ENTRYPOINT ["bash"]
 
-FROM builder as test
+FROM builder AS test
 
 WORKDIR /app
 
