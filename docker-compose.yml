@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/workspace/target
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      - RUST_LOG=info
+      - CARGO_TARGET_DIR=/workspace/target
+
+  build:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    working_dir: /app
+    command: cargo build --release
+
+  test:
+    build:
+      context: .
+      target: test
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    environment:
+      - RUST_LOG=debug
+      - RUST_BACKTRACE=1
+
+  opencli:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./examples:/project
+      - opencli-config:/home/opencli/.config/opencli
+    working_dir: /project
+    stdin_open: true
+    tty: true
+
+  demo:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./examples:/project
+      - opencli-config:/home/opencli/.config/opencli
+    working_dir: /project
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Y-Less/sscanf --target components &&
+        opencli build --verbose
+      "
+
+volumes:
+  cargo-cache:
+  target-cache:
+  opencli-config:

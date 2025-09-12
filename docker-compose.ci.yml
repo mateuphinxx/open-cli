@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  lint:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    working_dir: /app
+    command: |
+      sh -c "
+        cargo fmt --check &&
+        cargo clippy -- -D warnings &&
+        cargo check
+      "
+
+  test:
+    build:
+      context: .
+      target: test
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    environment:
+      - RUST_LOG=error
+      - CI=true
+    command: cargo test --release --verbose
+
+  build-release:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - ./artifacts:/artifacts
+    working_dir: /app
+    command: |
+      sh -c "
+        cargo build --release &&
+        cp target/release/opencli /artifacts/ &&
+        strip /artifacts/opencli
+      "
+
+  security-audit:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    working_dir: /app
+    command: |
+      sh -c "
+        cargo install cargo-audit &&
+        cargo audit
+      "
+
+  integration-test:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-projects:/projects
+      - opencli-config:/home/opencli/.config/opencli
+    working_dir: /projects
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Y-Less/sscanf --target components &&
+        opencli package install Southclaws/pawn-requests --target plugins &&
+        opencli build --verbose &&
+        opencli package list &&
+        opencli package check
+      "
+
+  benchmark:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    working_dir: /app
+    command: cargo bench
+
+volumes:
+  cargo-cache:
+  opencli-config:

@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  test-package-install:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-scenarios/install:/project
+      - test-config:/home/opencli/.config/opencli
+    working_dir: /project
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Y-Less/sscanf=2.13.8 --target components &&
+        opencli package list &&
+        test -f components/sscanf.dll || test -f components/sscanf.so &&
+        test -f include/sscanf2.inc
+      "
+
+  test-package-remove:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-scenarios/remove:/project
+      - test-config:/home/opencli/.config/opencli
+    working_dir: /project
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Y-Less/sscanf --target components &&
+        opencli package remove Y-Less/sscanf &&
+        ! test -f components/sscanf.dll &&
+        ! test -f components/sscanf.so
+      "
+
+  test-build-workflow:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-scenarios/build:/project
+      - test-config:/home/opencli/.config/opencli
+    working_dir: /project
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Y-Less/sscanf --target components &&
+        opencli build --verbose &&
+        test -f gamemodes/gamemode.amx
+      "
+
+  test-legacy-plugins:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-scenarios/legacy:/project
+      - test-config:/home/opencli/.config/opencli
+    working_dir: /project
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Southclaws/pawn-requests --target plugins &&
+        test -f config.json &&
+        grep -q 'legacy_plugins' config.json &&
+        opencli package remove Southclaws/pawn-requests &&
+        ! grep -q 'requests' config.json || true
+      "
+
+  test-version-constraints:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-scenarios/versions:/project
+      - test-config:/home/opencli/.config/opencli
+    working_dir: /project
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install 'Y-Less/sscanf=^2.13.0' --target components &&
+        opencli package install 'pBlueG/SA-MP-MySQL=~R41-4' --target components &&
+        opencli package list &&
+        opencli package check
+      "
+
+  test-cross-platform:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./test-scenarios/cross:/project
+      - test-config:/home/opencli/.config/opencli
+    working_dir: /project
+    environment:
+      - OPENCLI_TEST_PLATFORM=linux
+    command: |
+      sh -c "
+        opencli setup --force &&
+        opencli install compiler &&
+        opencli package install Y-Less/sscanf --target components &&
+        opencli build
+      "
+
+volumes:
+  test-config:
