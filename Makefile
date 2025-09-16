@@ -49,6 +49,9 @@ docker-test:
 	docker compose -f docker-compose.test.yml up --abort-on-container-exit
 
 docker-ci:
+	docker compose -f docker-compose.sequential.yml up --abort-on-container-exit
+
+docker-ci-parallel:
 	docker compose -f docker-compose.ci.yml up --abort-on-container-exit
 
 docker-demo:
