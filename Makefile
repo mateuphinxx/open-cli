@@ -49,7 +49,11 @@ docker-test:
 	docker compose -f docker-compose.test.yml up --abort-on-container-exit
 
 docker-ci:
-	docker compose -f docker-compose.sequential.yml up --abort-on-container-exit
+	docker compose -f docker-compose.sequential.yml up lint --abort-on-container-exit && \
+	docker compose -f docker-compose.sequential.yml up test --abort-on-container-exit && \
+	docker compose -f docker-compose.sequential.yml up build-release --abort-on-container-exit && \
+	docker compose -f docker-compose.sequential.yml up security-audit --abort-on-container-exit && \
+	docker compose -f docker-compose.sequential.yml up integration-test --abort-on-container-exit
 
 docker-ci-parallel:
 	docker compose -f docker-compose.ci.yml up --abort-on-container-exit

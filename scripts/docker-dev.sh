@@ -13,7 +13,11 @@ case "$1" in
         docker compose -f docker-compose.test.yml up --abort-on-container-exit
         ;;
     "ci")
-        docker compose -f docker-compose.sequential.yml up --abort-on-container-exit
+        docker compose -f docker-compose.sequential.yml up lint --abort-on-container-exit && \
+        docker compose -f docker-compose.sequential.yml up test --abort-on-container-exit && \
+        docker compose -f docker-compose.sequential.yml up build-release --abort-on-container-exit && \
+        docker compose -f docker-compose.sequential.yml up security-audit --abort-on-container-exit && \
+        docker compose -f docker-compose.sequential.yml up integration-test --abort-on-container-exit
         ;;
     "ci-parallel")
         docker compose -f docker-compose.ci.yml up --abort-on-container-exit
@@ -38,8 +42,8 @@ case "$1" in
         echo "  dev         - Start development environment"
         echo "  build       - Build release binary"
         echo "  test        - Run test suite"
-        echo "  ci          - Run sequential CI pipeline"
-        echo "  ci-parallel - Run parallel CI pipeline"
+        echo "  ci          - Run CI pipeline (sequential)"
+        echo "  ci-parallel - Run CI pipeline (parallel)"
         echo "  demo        - Run demo workflow"
         echo "  clean       - Clean up containers and volumes"
         echo "  shell       - Open development shell"
