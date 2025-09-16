@@ -24,7 +24,9 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=builder /app/target/release/opencli /usr/local/bin/opencli
 
-RUN useradd -m -s /bin/bash opencli
+RUN useradd -m -s /bin/bash opencli && \
+    mkdir -p /home/opencli/.config/opencli && \
+    chown -R opencli:opencli /home/opencli
 USER opencli
 WORKDIR /home/opencli
 
