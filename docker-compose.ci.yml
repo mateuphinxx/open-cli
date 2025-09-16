@@ -7,8 +7,13 @@ services:
       - .:/app
       - cargo-cache:/usr/local/cargo/registry
     working_dir: /app
+    environment:
+      - CARGO_HOME=/usr/local/cargo
     command: |
       sh -c "
+        rustup component list --installed &&
+        cargo fmt --version &&
+        cargo clippy --version &&
         cargo fmt --check &&
         cargo clippy -- -D warnings &&
         cargo check
