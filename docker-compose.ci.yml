@@ -65,19 +65,18 @@ services:
       context: .
       target: runtime
     volumes:
-      - ./test-projects:/projects
       - opencli-config:/home/opencli/.config/opencli
-    working_dir: /projects
+    user: opencli
+    working_dir: /home/opencli
     entrypoint: ["sh"]
     command: |
       -c "
-        mkdir -p /projects &&
-        cd /projects &&
         echo 'main() {}' > gamemode.pwn &&
         opencli setup --force &&
         opencli install compiler &&
         opencli package install Y-Less/sscanf --target components &&
-        opencli build --verbose
+        opencli build --verbose &&
+        opencli package list
       "
 
   benchmark:
