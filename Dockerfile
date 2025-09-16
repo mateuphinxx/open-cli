@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+RUN rustup component add rustfmt clippy
+
 COPY Cargo.toml ./
 COPY src ./src
 
@@ -43,6 +45,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     && rm -rf /var/lib/apt/lists/*
+
+RUN rustup component add rustfmt clippy
 
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN cargo install cargo-watch
