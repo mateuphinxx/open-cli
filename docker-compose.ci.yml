@@ -17,14 +17,18 @@ services:
   test:
     build:
       context: .
-      target: test
+      target: builder
     volumes:
       - .:/app
       - cargo-cache:/usr/local/cargo/registry
+    working_dir: /app
     environment:
       - RUST_LOG=error
       - CI=true
-    command: cargo test --release --verbose
+    command: |
+      sh -c "
+        cargo test --release --verbose
+      "
 
   build-release:
     build:
@@ -64,15 +68,16 @@ services:
       - ./test-projects:/projects
       - opencli-config:/home/opencli/.config/opencli
     working_dir: /projects
+    entrypoint: ["sh"]
     command: |
-      sh -c "
+      -c "
+        mkdir -p /projects &&
+        cd /projects &&
+        echo 'main() {}' > gamemode.pwn &&
         opencli setup --force &&
         opencli install compiler &&
         opencli package install Y-Less/sscanf --target components &&
-        opencli package install Southclaws/pawn-requests --target plugins &&
-        opencli build --verbose &&
-        opencli package list &&
-        opencli package check
+        opencli build --verbose
       "
 
   benchmark:

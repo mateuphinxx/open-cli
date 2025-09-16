@@ -14,7 +14,7 @@ COPY src ./src
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN cargo build --release
 
-FROM debian:bookworm-slim AS runtime
+FROM debian:trixie-slim AS runtime
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
@@ -54,5 +54,3 @@ WORKDIR /app
 COPY . .
 
 RUN cargo test --release
-
-ENTRYPOINT ["cargo", "test"]
