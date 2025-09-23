@@ -116,4 +116,11 @@ impl CacheManager {
         fs::write(&self.cache_file, new_content).await?;
         Ok(())
     }
+    
+    pub async fn clear_cache(&self) -> Result<()> {
+        if self.cache_file.exists() {
+            fs::write(&self.cache_file, "").await?;
+        }
+        Ok(())
+    }
 }
