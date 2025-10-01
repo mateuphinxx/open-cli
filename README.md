@@ -5,6 +5,10 @@ CLI tool for open.mp server management and Pawn project building with package ma
 
 *Inspired by [sampctl](https://github.com/Southclaws/sampctl)*
 
+## Wiki's
+- [**Home Page**](https://github.com/mateuphinxx/open-cli/wiki)
+- [**Compiler Options**](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
+
 ## Features
 
 - **Package Management** - Install libraries like sscanf, mysql from GitHub
