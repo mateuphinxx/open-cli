@@ -67,7 +67,6 @@ impl Default for BuildConfig {
                         "-(+".to_string(),
                         "-\\+".to_string(),
                         "-Z+".to_string(),
-                        "-O2".to_string(),
                     ],
                 }),
             },
