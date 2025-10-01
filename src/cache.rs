@@ -116,4 +116,27 @@ impl CacheManager {
         fs::write(&self.cache_file, new_content).await?;
         Ok(())
     }
+
+    pub async fn clear_cache(&self) -> Result<()> {
+        if self.cache_file.exists() {
+            /* write to empty */
+            fs::write(&self.cache_file, "").await?;
+        }
+        Ok(())
+    }
+
+    pub async fn exists_cache(&self, filename: &str) -> Result<bool> {
+        let hashes = self.load_all_hashes().await?;
+        Ok(hashes.contains_key(filename))
+    }
+
+    pub async fn count_cache(&self) -> Result<usize> {
+        let hashes = self.load_all_hashes().await?;
+        Ok(hashes.len())
+    }
+
+    pub async fn list_files_cache(&self) -> Result<Vec<String>> {
+        let hashes = self.load_all_hashes().await?;
+        Ok(hashes.keys().cloned().collect())
+    }
 }
