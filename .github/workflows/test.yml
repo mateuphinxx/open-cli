@@ -2,9 +2,9 @@ name: Test & Quality Check
 
 on:
   push:
-    branches: ["**"]
+    branches: [master]
   pull_request:
-    branches: [master, main, develop]
+    branches: [master]
   schedule:
     - cron: "0 0 * * 0"
   workflow_dispatch:
@@ -120,7 +120,7 @@ jobs:
       - name: Create test scenario directories
         run: |
           mkdir -p test-scenarios/${{ matrix.test }}
-          echo 'main() { print("Test"); }' > test-scenarios/${{ matrix.test }}/gamemode.pwn
+          echo 'main() { print("Test scenario"); }' > test-scenarios/${{ matrix.test }}/gamemode.pwn
 
       - name: Run integration test - ${{ matrix.test }}
         run: docker compose -f docker-compose.test.yml up test-${{ matrix.test }} --abort-on-container-exit --exit-code-from test-${{ matrix.test }}
@@ -195,4 +195,3 @@ jobs:
           needs.docker-tests.result == 'failure' ||
           needs.security-audit.result == 'failure'
         run: exit 1
-
