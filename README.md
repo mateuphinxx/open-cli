@@ -1,7 +1,9 @@
 # OpenCLI
+
 CLI tool for open.mp server management and Pawn project building with package management system.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Test](https://github.com/mateuphinxx/open-cli/actions/workflows/test.yml/badge.svg)](https://github.com/mateuphinxx/open-cli/actions/workflows/test.yml)
 
 *Inspired by [sampctl](https://github.com/Southclaws/sampctl)*
 
@@ -20,10 +22,35 @@ CLI tool for open.mp server management and Pawn project building with package ma
 
 ## Installation
 
+### From Release
+
+Download the latest binary for your platform from [Releases](https://github.com/mateuphinxx/open-cli/releases).
+
+**Linux/macOS:**
+```bash
+tar -xzf opencli-*.tar.gz
+sudo mv opencli /usr/local/bin/
+opencli --version
+```
+
+**Windows:**
+Extract the ZIP and add to PATH.
+
+### From Source
+
 ```bash
 git clone https://github.com/mateuphinxx/open-cli
 cd open-cli
 cargo build --release
+```
+
+Binary will be in `target/release/opencli`.
+
+### Using Docker
+
+```bash
+docker pull ghcr.io/mateuphinxx/open-cli:latest
+docker run --rm -v $(pwd):/workspace ghcr.io/mateuphinxx/open-cli:latest --help
 ```
 
 ## Quick Start
@@ -35,7 +62,7 @@ opencli setup
 # Install Pawn compiler
 opencli install compiler
 
-# Install packages (example: sscanf)
+# Install packages
 opencli package install Y-Less/sscanf
 
 # Build project
@@ -45,9 +72,17 @@ opencli build
 opencli run
 ```
 
+## Documentation
+
+- [Package Management](https://github.com/mateuphinxx/open-cli/wiki)
+- [Compiler Options](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
+- [Docker Guide](docs/DOCKER.md)
+- [Contributing](docs/CONTRIBUTING.md)
+
 ## Package Management
 
 ### Install Packages
+
 ```bash
 # Install all packages from opencli.toml
 opencli package install
@@ -57,11 +92,12 @@ opencli package install Y-Less/sscanf
 opencli package install "Y-Less/sscanf=2.13.8"
 opencli package install Y-Less/sscanf --target components
 
-# Install with versioning
+# With version constraints
 opencli package install "Y-Less/sscanf=^2.13.7"
 ```
 
-### Package Management
+### Manage Packages
+
 ```bash
 # List installed packages
 opencli package list
@@ -72,30 +108,21 @@ opencli package remove Y-Less/sscanf
 # Update packages
 opencli package update Y-Less/sscanf
 opencli package update --all
+
+# Check integrity
+opencli package check
 ```
 
 ### Version Constraints
+
 ```toml
 [packages]
-"owner/repo" = "^x.y.z"              # Compatible updates (>=x.y.z, <(x+1).0.0)
-"owner/repo" = "~x.y.z"              # Patch updates only (>=x.y.z, <x.(y+1).0)
+"owner/repo" = "^x.y.z"              # Compatible updates
+"owner/repo" = "~x.y.z"              # Patch updates only
 "owner/repo" = ">=x.y.z, <a.b.c"     # Range constraint
-"owner/repo" = "latest"              # Always use latest version
+"owner/repo" = "latest"              # Always latest
 "owner/repo" = "x.y.z"               # Exact version
 ```
-
-### File Placement
-
-OpenCLI automatically places files according to their type:
-
-- **Include Files (.inc)** → Goes to folders defined in `[build.includes]`
-- **Components** → `.dll`/`.so` files go to `components/` folder
-- **Plugins** → Legacy files go to `plugins/` folder
-- **Root Libraries** → Files containing "amx", "lib", or "log-core" (like `amxsscanf.dll`, `log-core.dll`) → root directory
-
-**Archive Detection:**
-- If archive contains `components/` folder → files are taken from there for components target
-- If archive contains `plugins/` folder → files are taken from there for plugins target
 
 ## Configuration
 
@@ -108,88 +135,52 @@ output_file = "gamemodes/gamemode.amx"
 compiler_version = "v3.10.11"
 
 [build.includes]
-paths = [
-    "include"           # Package includes will go here
-]
+paths = ["include"]
 
 [build.args]
 args = ["-d3", "-;+", "-(+", "-\\+", "-Z+", "-O2"]
+
+[packages]
+"Y-Less/sscanf" = { version = "^2.13.8", target = "components" }
 ```
 
-## Compiler Management
+## Building
 
 ```bash
-# Install default compiler (v3.10.11)
-opencli install compiler
-
-# Install specific version
-opencli install compiler --version v3.10.11
-
-# Force reinstall
-opencli install compiler --force
-```
-
-## Project Building
-
-```bash
-# Build with default settings
+# Default build
 opencli build
 
-# Build with verbose output
+# Verbose output
 opencli build --verbose
 
 # Force compiler re-download
 opencli build --force-download
+
+# Update compiler config
+opencli build --update-config
 ```
 
-## Server Management
+## Development
 
 ```bash
-# Run server (auto-detect omp-server)
-opencli run
+# Format code
+cargo fmt --all
 
-# Run with custom path
-opencli run --server-path "path/to/omp-server.exe"
+# Run linter
+cargo clippy --all-targets --all-features
+
+# Run tests
+cargo test --release
+
+# Docker development
+docker compose up dev
 ```
 
-## File Locations
-
-All OpenCLI files are stored in:
-
-- **Windows**: `%APPDATA%\opencli\`
-- **Linux/macOS**: `~/.config/opencli/`
-
-## Example Workflow
-
-```bash
-# 1. Setup new project
-opencli setup
-
-# 2. Install dependencies
-opencli package install Y-Less/sscanf
-opencli package install pBlueG/SA-MP-MySQL --target plugins
-
-# 3. Build project (includes automatically available)
-opencli build
-
-# 4. Run server (binaries already in correct places)
-opencli run
-```
-
-## Package Examples
-
-```toml
-[packages]
-# Components plugins
-"Y-Less/sscanf" = { version = "^2.13.8", target = "components" }
-
-# Legacy Plugins
-"Southclaws/pawn-requests" = { version = "latest", target = "plugins" }
-```
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
 
 ## Requirements
 
-- Rust 1.89.0+
+- Rust 1.89.0+ (for building from source)
 - Internet connection (first time setup)
 - open.mp server binary (for running servers)
 
