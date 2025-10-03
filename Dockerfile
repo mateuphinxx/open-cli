@@ -1,66 +1,138 @@
-FROM rust:1.89.0-slim AS builder
+FROM rust:1.89.0-alpine AS base
 
-WORKDIR /app
+WORKDIR /build
 
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
+RUN apk add --no-cache \
+    musl-dev \
+    openssl-dev \
+    openssl-libs-static \
+    pkgconfig \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    git
 
-RUN rustup update && \
-    rustup component add rustfmt clippy && \
+RUN rustup component add rustfmt clippy && \
     cargo --version && \
-    rustc --version
+    rustc --version && \
+    rustfmt --version && \
+    clippy-driver --version
 
-COPY Cargo.toml ./
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse \
+    CARGO_INCREMENTAL=0 \
+    CARGO_NET_RETRY=10 \
+    RUSTUP_MAX_RETRIES=10 \
+    RUSTFLAGS="-C target-feature=-crt-static"
+
+FROM base AS planner
+
+RUN cargo install cargo-chef
+
+COPY Cargo.toml Cargo.lock ./
+
+RUN cargo chef prepare --recipe-path recipe.json
+
+FROM base AS dependencies
+
+RUN cargo install cargo-chef
+
+COPY --from=planner /build/recipe.json recipe.json
+
+RUN cargo chef cook --release --recipe-path recipe.json
+
+FROM base AS builder
+
+COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 
-ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-RUN cargo build --release
+COPY --from=dependencies /build/target /build/target
+COPY --from=dependencies /usr/local/cargo /usr/local/cargo
 
-FROM debian:trixie-slim AS runtime
+RUN cargo build --release && \
+    strip /build/target/release/opencli && \
+    cargo clean --release -p opencli && \
+    rm -rf /build/target/release/deps /build/target/release/build
 
-RUN apt-get update && apt-get install -y \
+FROM alpine:3.19 AS runtime
+
+RUN apk add --no-cache \
     ca-certificates \
+    libgcc \
     curl \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    bash
 
-COPY --from=builder /app/target/release/opencli /usr/local/bin/opencli
+COPY --from=builder /build/target/release/opencli /usr/local/bin/opencli
 
-RUN useradd -m -s /bin/bash opencli && \
-    mkdir -p /home/opencli/.config/opencli && \
-    chown -R opencli:opencli /home/opencli
+RUN opencli --version
+
+RUN addgroup -S opencli && \
+    adduser -S opencli -G opencli -h /home/opencli -s /bin/bash && \
+    mkdir -p /home/opencli/.config/opencli /workspace && \
+    chown -R opencli:opencli /home/opencli /workspace
+
 USER opencli
-WORKDIR /home/opencli
+WORKDIR /workspace
+
+ENV HOME=/home/opencli \
+    USER=opencli \
+    RUST_LOG=info
+
+LABEL org.opencontainers.image.title="OpenCLI" \
+      org.opencontainers.image.description="CLI tool for open.mp server management and Pawn project building" \
+      org.opencontainers.image.authors="mateuphinxx" \
+      org.opencontainers.image.source="https://github.com/mateuphinxx/open-cli" \
+      org.opencontainers.image.licenses="MIT"
 
 ENTRYPOINT ["opencli"]
+CMD ["--help"]
 
-FROM rust:1.89.0-slim AS development
+FROM base AS development
 
 WORKDIR /workspace
 
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
-    ca-certificates \
+RUN apk add --no-cache \
     git \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    vim \
+    bash
 
-RUN rustup update && \
-    rustup component add rustfmt clippy
+RUN cargo install cargo-watch cargo-expand cargo-edit
 
-ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-RUN cargo install cargo-watch
+ENV RUST_LOG=debug \
+    RUST_BACKTRACE=full
 
-ENTRYPOINT ["bash"]
+VOLUME ["/workspace", "/usr/local/cargo/registry"]
 
-FROM builder AS test
+ENTRYPOINT ["/bin/bash"]
+
+FROM base AS lint
 
 WORKDIR /app
 
-COPY . .
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
 
-RUN cargo test --release
+RUN cargo fmt --check && \
+    cargo clippy --all-targets --all-features -- -D warnings && \
+    cargo check --all-targets --all-features
+
+FROM base AS test
+
+WORKDIR /app
+
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+
+ENV RUST_BACKTRACE=1 \
+    RUST_LOG=debug
+
+RUN cargo test --release --verbose -- --nocapture
+
+FROM runtime AS production
+
+ENV RUST_LOG=warn
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD opencli --version || exit 1
+
+USER opencli
+WORKDIR /workspace

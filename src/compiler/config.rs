@@ -1,6 +1,6 @@
+use crate::result::{OpenCliError, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::result::{Result, OpenCliError};
 use tokio::fs;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -22,20 +22,22 @@ pub struct PlatformConfig {
 impl CompilerConfig {
     pub async fn from_file(path: &str) -> Result<Self> {
         let content = fs::read_to_string(path).await?;
-        let config: CompilerConfig = toml::from_str(&content)
-            .map_err(|e| OpenCliError::Config(format!("Invalid compiler config format: {}", e).into()))?;
-        
+        let config: CompilerConfig = toml::from_str(&content).map_err(|e| {
+            OpenCliError::Config(format!("Invalid compiler config format: {}", e).into())
+        })?;
+
         Ok(config)
     }
-    
+
     pub async fn save_to_file(&self, path: &str) -> Result<()> {
-        let content = toml::to_string_pretty(self)
-            .map_err(|e| OpenCliError::Config(format!("Failed to serialize compiler config: {}", e).into()))?;
-        
+        let content = toml::to_string_pretty(self).map_err(|e| {
+            OpenCliError::Config(format!("Failed to serialize compiler config: {}", e).into())
+        })?;
+
         fs::write(path, content).await?;
         Ok(())
     }
-    
+
     pub fn get_platform_config(&self) -> Option<&PlatformConfig> {
         if cfg!(target_os = "windows") {
             self.windows.as_ref()

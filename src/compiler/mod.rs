@@ -1,7 +1,7 @@
 pub mod config;
-pub mod manager;
 pub mod downloader;
+pub mod manager;
 
 pub use config::*;
-pub use manager::*;
 pub use downloader::*;
+pub use manager::*;
