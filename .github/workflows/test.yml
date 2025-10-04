@@ -118,12 +118,12 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Create test scenario
+      - name: Setup test scenarios
         run: |
-          mkdir -p test-scenarios/${{ matrix.test }}
-          echo 'main() { print("Test"); }' > test-scenarios/${{ matrix.test }}/gamemode.pwn
+          chmod +x scripts/setup-test-scenarios.sh
+          ./scripts/setup-test-scenarios.sh
 
-      - name: Run test - ${{ matrix.test }}
+      - name: Run integration test - ${{ matrix.test }}
         run: docker compose -f docker-compose.test.yml up test-${{ matrix.test }} --abort-on-container-exit --exit-code-from test-${{ matrix.test }}
 
   security-audit:
