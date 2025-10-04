@@ -54,40 +54,25 @@ RUN cargo build --release && \
     strip /tmp/target/release/opencli && \
     rm -rf /tmp/target/release/deps /tmp/target/release/build /tmp/target/release/*.d
 
-FROM alpine:3.19 AS runtime
+FROM debian:12-slim AS runtime
 
-ENV GLIBC_VERSION=2.35-r1
-
-RUN apk add --no-cache \
-    ca-certificates \
-    libgcc \
-    libstdc++ \
-    curl \
-    git \
-    bash \
-    wget && \
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk && \
-    apk add --no-cache --force-overwrite \
-        glibc-${GLIBC_VERSION}.apk \
-        glibc-bin-${GLIBC_VERSION}.apk \
-        glibc-i18n-${GLIBC_VERSION}.apk && \
-    /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 && \
-    rm glibc-*.apk && \
-    apk del wget && \
-    mkdir -p /lib64 && \
-    ln -sf /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
-
-ENV LD_LIBRARY_PATH=/usr/glibc-compat/lib:$LD_LIBRARY_PATH
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        bash \
+        libssl3 \
+        libgcc-s1 \
+        libc6 && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /tmp/target/release/opencli /usr/local/bin/opencli
 
 RUN opencli --version
 
-RUN addgroup -S opencli && \
-    adduser -S opencli -G opencli -h /home/opencli -s /bin/bash && \
+RUN groupadd -r opencli && \
+    useradd -r -g opencli -d /home/opencli -s /bin/bash -m opencli && \
     mkdir -p /home/opencli/.config/opencli /workspace && \
     chown -R opencli:opencli /home/opencli /workspace
 

@@ -80,13 +80,6 @@ services:
         opencli setup --force
         echo 'main() { print("Build Test"); }' > gamemodes/gamemode.pwn
         opencli install compiler
-        echo 'Checking compiler installation...'
-        ls -la /root/.config/opencli/compilers/v3.10.11/
-        echo 'Checking glibc installation...'
-        ls -la /lib64/ 2>&1 || echo 'No /lib64'
-        ls -la /usr/glibc-compat/lib/ 2>&1 || echo 'No glibc-compat'
-        echo 'Testing compiler execution directly...'
-        /root/.config/opencli/compilers/v3.10.11/pawncc 2>&1 | head -5 || echo "Direct execution failed with code $?"
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
         test -f gamemodes/gamemode.amx
