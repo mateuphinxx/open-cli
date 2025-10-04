@@ -11,6 +11,7 @@ x-test-base: &test-base
   environment:
     RUST_LOG: info
     CI: "true"
+  entrypoint: []
 
 services:
   test-package-install:
