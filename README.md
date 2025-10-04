@@ -11,6 +11,13 @@ CLI tool for open.mp server management and Pawn project building with package ma
 - [**Home Page**](https://github.com/mateuphinxx/open-cli/wiki)
 - [**Compiler Options**](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
 
+## Documentation
+
+- [Package Management](https://github.com/mateuphinxx/open-cli/wiki)
+- [Compiler Options](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
+- [Docker Guide](docs/DOCKER.md)
+- [Contributing](docs/CONTRIBUTING.md)
+
 ## Features
 
 - **Package Management** - Install libraries like sscanf, mysql from GitHub
@@ -71,13 +78,6 @@ opencli build
 # Run server
 opencli run
 ```
-
-## Documentation
-
-- [Package Management](https://github.com/mateuphinxx/open-cli/wiki)
-- [Compiler Options](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
-- [Docker Guide](docs/DOCKER.md)
-- [Contributing](docs/CONTRIBUTING.md)
 
 ## Package Management
 
