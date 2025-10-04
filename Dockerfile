@@ -69,11 +69,18 @@ RUN apk add --no-cache \
     wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
     wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
     wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk && \
     apk add --no-cache --force-overwrite \
         glibc-${GLIBC_VERSION}.apk \
-        glibc-bin-${GLIBC_VERSION}.apk && \
+        glibc-bin-${GLIBC_VERSION}.apk \
+        glibc-i18n-${GLIBC_VERSION}.apk && \
+    /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 && \
     rm glibc-*.apk && \
-    apk del wget
+    apk del wget && \
+    mkdir -p /lib64 && \
+    ln -sf /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+
+ENV LD_LIBRARY_PATH=/usr/glibc-compat/lib:$LD_LIBRARY_PATH
 
 COPY --from=builder /tmp/target/release/opencli /usr/local/bin/opencli
 
