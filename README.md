@@ -186,6 +186,6 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
 
 ## License
 
-MIT License - Copyright (c) 2025 Mattias Theodore "mateuphinxx" Bartholomew
+MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
 
 See [LICENSE](LICENSE) for details.
