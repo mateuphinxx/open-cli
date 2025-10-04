@@ -165,6 +165,7 @@ opencli build --update-config
 ```bash
 # Format code
 cargo fmt --all
+make docker-format  # Using Docker
 
 # Run linter
 cargo clippy --all-targets --all-features

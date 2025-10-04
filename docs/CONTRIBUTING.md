@@ -5,13 +5,22 @@
 Before committing, format your code:
 
 ```bash
+# Local formatting
 cargo fmt --all
+
+# Using Docker
+docker compose -f docker-compose.yml up format --abort-on-container-exit
+# or
+make docker-format
 ```
 
 Check if formatting is correct:
 
 ```bash
 cargo fmt --all -- --check
+
+# Using Docker
+docker compose -f docker-compose.ci.yml up format-check --abort-on-container-exit
 ```
 
 ## Linting

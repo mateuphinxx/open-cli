@@ -87,6 +87,22 @@ services:
     networks:
       - opencli-network
 
+  format:
+    build:
+      context: .
+      target: base
+      dockerfile: Dockerfile
+    container_name: opencli-format
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command:
+      - cargo
+      - fmt
+      - --all
+    networks:
+      - opencli-network
+
 networks:
   opencli-network:
     driver: bridge

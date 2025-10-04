@@ -27,7 +27,7 @@ services:
       context: .
       target: base
       dockerfile: Dockerfile
-    container_name: ci-format
+    container_name: ci-format-check
     volumes:
       - .:/app:ro
     working_dir: /app
@@ -35,6 +35,21 @@ services:
       - cargo
       - fmt
       - --check
+
+  format:
+    <<: *ci-base
+    build:
+      context: .
+      target: base
+      dockerfile: Dockerfile
+    container_name: ci-format
+    volumes:
+      - .:/app
+    working_dir: /app
+    command:
+      - cargo
+      - fmt
+      - --all
 
   clippy:
     <<: *ci-base

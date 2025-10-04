@@ -1,4 +1,4 @@
-.PHONY: help dev build test clean docker-build docker-test lint format check install release
+.PHONY: help dev build test clean docker-build docker-format docker-test lint format check install release
 
 BINARY_NAME := opencli
 CARGO := cargo
@@ -28,6 +28,7 @@ help:
 	@echo "Docker:"
 	@echo "  make docker-build     - Build Docker images"
 	@echo "  make docker-dev       - Start Docker dev environment"
+	@echo "  make docker-format    - Format code using Docker"
 	@echo "  make docker-test      - Run tests in Docker"
 	@echo "  make docker-clean     - Clean Docker resources"
 	@echo ""
@@ -83,6 +84,9 @@ docker-build:
 docker-dev:
 	$(DOCKER_COMPOSE) -f docker-compose.yml up dev
 
+docker-format:
+	$(DOCKER_COMPOSE) -f docker-compose.yml up format --abort-on-container-exit
+
 docker-test:
 	$(DOCKER_COMPOSE) -f docker-compose.test.yml up --abort-on-container-exit
 
@@ -96,7 +100,7 @@ ci:
 	$(DOCKER_COMPOSE) -f docker-compose.ci.yml up test --abort-on-container-exit
 	$(DOCKER_COMPOSE) -f docker-compose.ci.yml up build-release --abort-on-container-exit
 	$(DOCKER_COMPOSE) -f docker-compose.ci.yml up security-audit --abort-on-container-exit
-	@echo "✅ CI pipeline completed successfully"
+	@echo "CI pipeline completed successfully"
 
 security-audit:
 	$(DOCKER_COMPOSE) -f docker-compose.ci.yml up security-audit --abort-on-container-exit
