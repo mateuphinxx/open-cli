@@ -144,11 +144,12 @@ jobs:
         run: cargo audit
 
       - name: Check deny.toml
-        uses: EmbarkStudios/cargo-deny-action@v1
+        uses: EmbarkStudios/cargo-deny-action@v2
         with:
           log-level: warn
           command: check
           arguments: --all-features
+          rust-version: "1.89.0"
 
   coverage:
     name: Code Coverage
