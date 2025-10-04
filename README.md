@@ -138,7 +138,7 @@ compiler_version = "v3.10.11"
 paths = ["include"]
 
 [build.args]
-args = ["-d3", "-;+", "-(+", "-\\+", "-Z+", "-O2"]
+args = ["-d3", "-;+", "-(+", "-\\+", "-Z+"]
 
 [packages]
 "Y-Less/sscanf" = { version = "^2.13.8", target = "components" }
