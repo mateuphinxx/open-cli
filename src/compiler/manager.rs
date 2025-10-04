@@ -8,6 +8,9 @@ use regex::Regex;
 use std::path::{Path, PathBuf};
 use tokio::fs;
 
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
+
 pub struct CompilerManager {
     config: CompilerConfig,
     downloader: CompilerDownloader,
@@ -325,6 +328,14 @@ impl CompilerManager {
                         }
 
                         std::fs::copy(&path, &target_path)?;
+                        
+                        #[cfg(unix)]
+                        {
+                            let mut perms = std::fs::metadata(&target_path)?.permissions();
+                            perms.set_mode(0o755);
+                            std::fs::set_permissions(&target_path, perms)?;
+                        }
+                        
                         std::fs::remove_file(&path)?;
                         return Ok(true);
                     }

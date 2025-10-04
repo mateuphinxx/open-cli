@@ -59,6 +59,8 @@ FROM alpine:3.19 AS runtime
 RUN apk add --no-cache \
     ca-certificates \
     libgcc \
+    libc6-compat \
+    libstdc++ \
     curl \
     git \
     bash
