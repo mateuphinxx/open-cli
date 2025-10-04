@@ -32,6 +32,8 @@ RUN cargo chef prepare --recipe-path recipe.json
 
 FROM base AS dependencies
 
+ENV CARGO_TARGET_DIR=/tmp/target
+
 RUN cargo install cargo-chef
 
 COPY --from=planner /build/recipe.json recipe.json
@@ -40,16 +42,18 @@ RUN cargo chef cook --release --recipe-path recipe.json
 
 FROM base AS builder
 
+ENV CARGO_TARGET_DIR=/tmp/target
+
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 
-COPY --from=dependencies /build/target /build/target
+COPY --from=dependencies /tmp/target /tmp/target
 COPY --from=dependencies /usr/local/cargo /usr/local/cargo
 
 RUN cargo build --release && \
-    strip /build/target/release/opencli && \
+    strip /tmp/target/release/opencli && \
     cargo clean --release -p opencli && \
-    rm -rf /build/target/release/deps /build/target/release/build
+    rm -rf /tmp/target/release/deps /tmp/target/release/build
 
 FROM alpine:3.19 AS runtime
 
@@ -60,7 +64,7 @@ RUN apk add --no-cache \
     git \
     bash
 
-COPY --from=builder /build/target/release/opencli /usr/local/bin/opencli
+COPY --from=builder /tmp/target/release/opencli /usr/local/bin/opencli
 
 RUN opencli --version
 
