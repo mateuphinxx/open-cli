@@ -134,7 +134,7 @@ impl BuildCommand {
         let compile_start = Instant::now();
         let mut cmd = Command::new(compiler_path);
         cmd.current_dir(&current_dir);
-        
+
         if let Some(compiler_dir) = Path::new(compiler_path).parent() {
             let mut ld_path = compiler_dir.to_string_lossy().to_string();
             if let Ok(existing_ld) = std::env::var("LD_LIBRARY_PATH") {
