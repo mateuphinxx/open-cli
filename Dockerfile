@@ -56,14 +56,24 @@ RUN cargo build --release && \
 
 FROM alpine:3.19 AS runtime
 
+ENV GLIBC_VERSION=2.35-r1
+
 RUN apk add --no-cache \
     ca-certificates \
     libgcc \
-    libc6-compat \
     libstdc++ \
     curl \
     git \
-    bash
+    bash \
+    wget && \
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk && \
+    apk add --no-cache --force-overwrite \
+        glibc-${GLIBC_VERSION}.apk \
+        glibc-bin-${GLIBC_VERSION}.apk && \
+    rm glibc-*.apk && \
+    apk del wget
 
 COPY --from=builder /tmp/target/release/opencli /usr/local/bin/opencli
 
