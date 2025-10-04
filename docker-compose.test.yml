@@ -3,14 +3,16 @@ x-test-base: &test-base
     context: .
     target: runtime
     dockerfile: Dockerfile
+  user: root
   volumes:
-    - test-config:/home/opencli/.config/opencli
+    - test-config:/root/.config/opencli
   working_dir: /project
   networks:
     - test-network
   environment:
     RUST_LOG: info
     CI: "true"
+    HOME: /root
   entrypoint: []
 
 services:
@@ -19,7 +21,7 @@ services:
     container_name: test-package-install
     volumes:
       - ./test-scenarios/install:/project
-      - test-config:/home/opencli/.config/opencli
+      - test-config:/root/.config/opencli
     command:
       - sh
       - -c
@@ -39,7 +41,7 @@ services:
     container_name: test-package-remove
     volumes:
       - ./test-scenarios/remove:/project
-      - test-config:/home/opencli/.config/opencli
+      - test-config:/root/.config/opencli
     command:
       - sh
       - -c
@@ -59,7 +61,7 @@ services:
     container_name: test-build-workflow
     volumes:
       - ./test-scenarios/build:/project
-      - test-config:/home/opencli/.config/opencli
+      - test-config:/root/.config/opencli
     command:
       - sh
       - -c
@@ -78,7 +80,7 @@ services:
     container_name: test-legacy-plugins
     volumes:
       - ./test-scenarios/legacy:/project
-      - test-config:/home/opencli/.config/opencli
+      - test-config:/root/.config/opencli
     command:
       - sh
       - -c
@@ -99,7 +101,7 @@ services:
     container_name: test-version-constraints
     volumes:
       - ./test-scenarios/versions:/project
-      - test-config:/home/opencli/.config/opencli
+      - test-config:/root/.config/opencli
     command:
       - sh
       - -c
@@ -134,7 +136,7 @@ services:
     container_name: opencli-integration
     volumes:
       - ./test-scenarios/integration:/project
-      - test-config:/home/opencli/.config/opencli
+      - test-config:/root/.config/opencli
     command:
       - sh
       - -c
