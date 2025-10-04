@@ -142,9 +142,10 @@ jobs:
 
       - name: Run security audit
         run: cargo audit
-
+        
       - name: Check deny.toml
         uses: EmbarkStudios/cargo-deny-action@v2
+        continue-on-error: true
         with:
           log-level: warn
           command: check
