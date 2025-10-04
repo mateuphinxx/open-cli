@@ -328,14 +328,14 @@ impl CompilerManager {
                         }
 
                         std::fs::copy(&path, &target_path)?;
-                        
+
                         #[cfg(unix)]
                         {
                             let mut perms = std::fs::metadata(&target_path)?.permissions();
                             perms.set_mode(0o755);
                             std::fs::set_permissions(&target_path, perms)?;
                         }
-                        
+
                         std::fs::remove_file(&path)?;
                         return Ok(true);
                     }
