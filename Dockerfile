@@ -55,15 +55,20 @@ RUN cargo build --release && \
 
 FROM debian:12-slim AS runtime
 
-RUN apt-get update && \
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
         git \
         bash \
+        file \
         libssl3 \
         libgcc-s1 \
-        libc6 && \
+        libc6 \
+        libc6:i386 \
+        libgcc-s1:i386 \
+        libstdc++6:i386 && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /tmp/target/release/opencli /usr/local/bin/opencli

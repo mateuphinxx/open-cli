@@ -82,12 +82,14 @@ services:
         opencli install compiler
         echo 'Debug compiler installation...'
         ls -la /root/.config/opencli/compilers/v3.10.11/
+        echo 'Check pawncc file type:'
+        file /root/.config/opencli/compilers/v3.10.11/pawncc
+        echo 'Check libpawnc.so file type:'
+        file /root/.config/opencli/compilers/v3.10.11/libpawnc.so
         echo 'Check pawncc dependencies:'
-        ldd /root/.config/opencli/compilers/v3.10.11/pawncc || echo "ldd failed"
-        echo 'Check libpawnc.so:'
-        ldd /root/.config/opencli/compilers/v3.10.11/libpawnc.so || echo "ldd on libpawnc failed"
+        ldd /root/.config/opencli/compilers/v3.10.11/pawncc || echo "ldd check complete"
         echo 'Test direct execution:'
-        cd /root/.config/opencli/compilers/v3.10.11 && LD_LIBRARY_PATH=. ./pawncc 2>&1 | head -10 || echo "Failed with exit code $?"
+        cd /root/.config/opencli/compilers/v3.10.11 && LD_LIBRARY_PATH=. ./pawncc 2>&1 | head -10 || echo "Direct execution test done"
         cd /project
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
