@@ -33,14 +33,8 @@ services:
         opencli install compiler
         opencli package install Y-Less/sscanf=2.13.8 --target components
         opencli package list
-        echo 'Checking installed files...'
-        echo 'Components directory:'
-        ls -la components/ || echo 'No components directory'
-        echo 'Include directory:'
-        ls -la include/ || echo 'No include directory'
-        echo 'Verifying files exist...'
-        (test -f components/sscanf.dll || test -f components/sscanf.so) && echo 'Binary found' || echo 'Binary NOT found'
-        test -f include/sscanf2.inc && echo 'Include found' || echo 'Include NOT found'
+        (test -f components/sscanf.dll || test -f components/sscanf.so)
+        test -f include/sscanf2.inc
         echo 'Package installation test passed'
 
   test-package-remove:
@@ -78,19 +72,8 @@ services:
         echo '=== Testing Build Workflow ==='
         mkdir -p gamemodes include components plugins qawno/include
         opencli setup --force
-        echo 'main() { print("Build Test"); }' > gamemodes/gamemode.pwn
+        echo 'main() {}' > gamemodes/gamemode.pwn
         opencli install compiler
-        echo 'Debug compiler installation...'
-        ls -la /root/.config/opencli/compilers/v3.10.11/
-        echo 'Check pawncc file type:'
-        file /root/.config/opencli/compilers/v3.10.11/pawncc
-        echo 'Check libpawnc.so file type:'
-        file /root/.config/opencli/compilers/v3.10.11/libpawnc.so
-        echo 'Check pawncc dependencies:'
-        ldd /root/.config/opencli/compilers/v3.10.11/pawncc || echo "ldd check complete"
-        echo 'Test direct execution:'
-        cd /root/.config/opencli/compilers/v3.10.11 && LD_LIBRARY_PATH=. ./pawncc 2>&1 | head -10 || echo "Direct execution test done"
-        cd /project
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
         test -f gamemodes/gamemode.amx
@@ -168,7 +151,7 @@ services:
         echo '=== Running Full Integration Test ==='
         mkdir -p gamemodes include components plugins qawno/include
         opencli setup --force
-        echo 'main() { print("Integration Test"); }' > gamemodes/gamemode.pwn
+        echo 'main() {}' > gamemodes/gamemode.pwn
         opencli install compiler
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
