@@ -78,6 +78,7 @@ services:
         echo '=== Testing Build Workflow ==='
         mkdir -p gamemodes include components plugins qawno/include
         opencli setup --force
+        echo 'main() { print("Build Test"); }' > gamemodes/gamemode.pwn
         opencli install compiler
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
@@ -155,8 +156,8 @@ services:
         set -e
         echo '=== Running Full Integration Test ==='
         mkdir -p gamemodes include components plugins qawno/include
-        echo 'main() { print("Integration Test"); }' > gamemode.pwn
         opencli setup --force
+        echo 'main() { print("Integration Test"); }' > gamemodes/gamemode.pwn
         opencli install compiler
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
