@@ -28,6 +28,7 @@ services:
       - |
         set -e
         echo '=== Testing Package Installation ==='
+        mkdir -p gamemodes include components plugins
         opencli setup --force
         opencli install compiler
         opencli package install Y-Less/sscanf=2.13.8 --target components
@@ -48,6 +49,7 @@ services:
       - |
         set -e
         echo '=== Testing Package Removal ==='
+        mkdir -p gamemodes include components plugins
         opencli setup --force
         opencli install compiler
         opencli package install Y-Less/sscanf --target components
@@ -68,6 +70,7 @@ services:
       - |
         set -e
         echo '=== Testing Build Workflow ==='
+        mkdir -p gamemodes include components plugins
         opencli setup --force
         opencli install compiler
         opencli package install Y-Less/sscanf --target components
@@ -87,6 +90,7 @@ services:
       - |
         set -e
         echo '=== Testing Legacy Plugins ==='
+        mkdir -p gamemodes include components plugins
         opencli setup --force
         opencli install compiler
         opencli package install Southclaws/pawn-requests --target plugins
@@ -108,6 +112,7 @@ services:
       - |
         set -e
         echo '=== Testing Version Constraints ==='
+        mkdir -p gamemodes include components plugins
         opencli setup --force
         opencli install compiler
         opencli package install 'Y-Less/sscanf=^2.13.0' --target components
@@ -143,6 +148,7 @@ services:
       - |
         set -e
         echo '=== Running Full Integration Test ==='
+        mkdir -p gamemodes include components plugins
         echo 'main() { print("Integration Test"); }' > gamemode.pwn
         opencli setup --force
         opencli install compiler
