@@ -33,8 +33,13 @@ services:
         opencli install compiler
         opencli package install Y-Less/sscanf=2.13.8 --target components
         opencli package list
-        (test -f components/sscanf.dll || test -f components/sscanf.so)
-        test -f include/sscanf2.inc
+        echo 'Checking installed files...'
+        ls -la components/ || echo 'No components directory'
+        ls -la include/ || echo 'No include directory'
+        ls -la plugins/ || echo 'No plugins directory'
+        echo 'Verifying files exist...'
+        (test -f components/sscanf.dll || test -f components/sscanf.so) && echo '✓ Binary found' || echo '✗ Binary NOT found'
+        test -f include/sscanf2.inc && echo '✓ Include found' || echo '✗ Include NOT found'
         echo 'Package installation test passed'
 
   test-package-remove:
