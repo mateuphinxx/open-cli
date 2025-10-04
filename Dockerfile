@@ -1,14 +1,14 @@
-FROM rust:1.89.0-alpine AS base
+FROM rust:1.89.0-slim-bookworm AS base
 
 WORKDIR /build
 
-RUN apk add --no-cache \
-    musl-dev \
-    openssl-dev \
-    openssl-libs-static \
-    pkgconfig \
-    ca-certificates \
-    git
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        pkg-config \
+        libssl-dev \
+        ca-certificates \
+        git && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN rustup component add rustfmt clippy && \
     cargo --version && \
@@ -19,8 +19,7 @@ RUN rustup component add rustfmt clippy && \
 ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse \
     CARGO_INCREMENTAL=0 \
     CARGO_NET_RETRY=10 \
-    RUSTUP_MAX_RETRIES=10 \
-    RUSTFLAGS="-C target-feature=-crt-static"
+    RUSTUP_MAX_RETRIES=10
 
 FROM base AS planner
 
@@ -96,11 +95,13 @@ FROM base AS development
 
 WORKDIR /workspace
 
-RUN apk add --no-cache \
-    git \
-    curl \
-    vim \
-    bash
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        vim \
+        bash && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN cargo install cargo-watch cargo-expand cargo-edit
 
