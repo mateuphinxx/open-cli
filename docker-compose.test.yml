@@ -82,8 +82,7 @@ services:
         opencli install compiler
         echo 'Checking compiler installation...'
         ls -la /root/.config/opencli/compilers/v3.10.11/
-        file /root/.config/opencli/compilers/v3.10.11/pawncc
-        ldd /root/.config/opencli/compilers/v3.10.11/pawncc || echo 'ldd failed - statically linked or missing libs'
+        ldd /root/.config/opencli/compilers/v3.10.11/pawncc 2>&1 || echo 'Compiler dependencies check done'
         opencli package install Y-Less/sscanf --target components
         opencli build --verbose
         test -f gamemodes/gamemode.amx
