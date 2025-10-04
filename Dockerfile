@@ -52,8 +52,7 @@ COPY --from=dependencies /usr/local/cargo /usr/local/cargo
 
 RUN cargo build --release && \
     strip /tmp/target/release/opencli && \
-    cargo clean --release -p opencli && \
-    rm -rf /tmp/target/release/deps /tmp/target/release/build
+    rm -rf /tmp/target/release/deps /tmp/target/release/build /tmp/target/release/*.d
 
 FROM alpine:3.19 AS runtime
 
