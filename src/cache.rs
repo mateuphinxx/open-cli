@@ -1,4 +1,5 @@
 /*
+ * MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
  * CacheManager - A file-based cache system for storing and retrieving file hashes
  *
  * This module provides a persistent cache storage for file hashes using a simple
