@@ -94,7 +94,7 @@ impl CacheManager {
      * - No orphaned filename or hash lines
      * - Empty lines are ignored
      */
-    pub async fn rate_cache_grity(&self) -> Result<bool> {
+    pub async fn find_cache_integrity(&self) -> Result<bool> {
         // If cache file doesn't exist, it's considered valid (empty cache)
         if !self.cache_file.exists() {
             return Ok(true);
@@ -116,15 +116,15 @@ impl CacheManager {
                     // Found filename not followed by proper hash line
                     arg2_valid = false;
                     break;
-                } // if
+                } 
             } else {
                 // Filename at end of file without corresponding hash
                 arg2_valid = false;
                 break;
-            } // else
-        } // while
+            } 
+        } 
         Ok(arg2_valid)
-    } // rate_cache_grity
+    } // find_cache_integrity
 
     /** Repairs a corrupted cache file by rebuilding it from valid entries
      *
@@ -286,20 +286,20 @@ impl CacheManager {
         }
 
         let content = fs::read_to_string(&self.cache_file).await?;
-        let mut rate_curr_file = None; // Tracks the current filename being processed
+        let mut current_File = None; // Tracks the current filename being processed
 
         // Parse file content line by line
         for line in content.lines() {
             if line.starts_with("argon2:") {
                 // This is a hash line - pair it with the previous filename
-                if let Some(file) = rate_curr_file.take() {
+                if let Some(file) = current_File.take() {
                     let hash = line.strip_prefix("argon2:").unwrap().to_string();
                     hashes.insert(file, hash);
                 }
-                // If no rate_curr_file, this is an orphaned hash - skip it
+                // If no current_File, this is an orphaned hash - skip it
             } else if !line.is_empty() {
                 // This is a filename line - store it for next iteration
-                rate_curr_file = Some(line.to_string());
+                current_File = Some(line.to_string());
             }
             // Empty lines are ignored
         }
@@ -328,34 +328,34 @@ impl CacheManager {
 
         let content = fs::read_to_string(&self.cache_file).await?;
         let mut new_content = String::new();
-        let mut rate_curr_file = None;
-        let mut rate_skip_line = false; // Flag to skip hash line after removed filename
+        let mut current_File = None;
+        let mut skip_Line = false; // Flag to skip hash line after removed filename
 
         for line in content.lines() {
-            if rate_skip_line {
+            if skip_Line {
                 // Skip the hash line following a removed filename
-                rate_skip_line = false;
+                skip_Line = false;
                 continue;
             }
 
             if line.starts_with("argon2:") {
                 // This is a hash line
-                if let Some(file) = &rate_curr_file {
+                if let Some(file) = &current_File {
                     if file != filename {
                         // Keep entries that don't match target filename
                         new_content.push_str(&format!("{}\n{}\n", file, line));
                     }
                     // If file matches filename, both filename and hash are skipped
                 }
-                rate_curr_file = None;
+                current_File = None;
             } else if !line.is_empty() {
                 // This is a filename line
                 if line == filename {
                     // Mark this entry for removal
-                    rate_skip_line = true; // Next line (hash) will be skipped
-                    rate_curr_file = None;
+                    skip_Line = true; // Next line (hash) will be skipped
+                    current_File = None;
                 } else {
-                    rate_curr_file = Some(line.to_string());
+                    current_File = Some(line.to_string());
                 }
             }
         }
@@ -444,7 +444,7 @@ impl CacheManager {
      * - Identifying files with identical content
      * - Cache optimization by removing duplicates
      */
-    pub async fn rate_duplicate_hashes(&self) -> Result<HashMap<String, Vec<String>>> {
+    pub async fn find_duplicate_hashes(&self) -> Result<HashMap<String, Vec<String>>> {
         let hashes = self.load_all_hashes().await?;
         let mut hash_to_files: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -458,7 +458,7 @@ impl CacheManager {
             .into_iter()
             .filter(|(_, files)| files.len() > 1) // Only keep hashes with multiple files
             .collect())
-    } // rate_duplicate_hashes
+    } // find_duplicate_hashes
 
     /** Completely clears all entries from the cache
      *
