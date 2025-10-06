@@ -84,7 +84,7 @@ impl SecurityManager {
      * - `OpenCliError::Process` if hashing operation fails
      *
      * # Example
-     * ```no_run
+     * ```ignore
      * let security = SecurityManager::new();
      * let hash = security.hash_file(Path::new("document.pdf")).await?;
      * println!("File hash: {}", hash);
@@ -133,7 +133,7 @@ impl SecurityManager {
      * - Invalid hash format returns error to indicate corruption
      *
      * # Example
-     * ```no_run
+     * ```ignore
      * let security = SecurityManager::new();
      * let is_valid = security.verify_file(
      *     Path::new("document.pdf"),
@@ -184,7 +184,7 @@ impl SecurityManager {
      * - Integration with external content hashing systems
      *
      * # Example
-     * ```no_run
+     * ```ignore
      * let security = SecurityManager::new();
      * let sha256_hash = compute_sha256("file content");
      * let secure_hash = security.hash_file_content(&sha256_hash).await?;

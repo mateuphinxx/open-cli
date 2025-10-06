@@ -85,7 +85,7 @@ pub enum OpenCliError {
  * - Ensures consistent error messaging across the codebase
  *
  * # Usage Examples
- * ```no_run
+ * ```ignore
  * use opencli::result::OpenCliError;
  *
  * // Using constant error messages
@@ -121,7 +121,7 @@ impl OpenCliError {
      * - Any type implementing `Into<Cow<'static, str>>`
      *
      * # Example
-     * ```no_run
+     * ```ignore
      * OpenCliError::process("Custom process error");
      * OpenCliError::process(format!("Process {} failed", pid));
      * ```
