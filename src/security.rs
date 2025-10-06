@@ -1,5 +1,5 @@
 /*
- * MIT License - Copyright (c) 2025 [Your Name]
+ * MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
  * SecurityManager - Cryptographic operations for file integrity and verification
  *
  * This module provides secure hashing and verification capabilities using:
