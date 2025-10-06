@@ -1,6 +1,6 @@
 /// MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
 /// Argon Build System - A secure, cache-optimized build system
-/// 
+///
 /// This crate provides a comprehensive build system with focus on:
 /// - Security through cryptographic hashing (Argon2)
 /// - Efficient caching mechanisms  
@@ -17,7 +17,6 @@
 /// - result: Error handling and result types
 /// - security: Cryptographic utilities and hash management
 /// - utils: Common utilities and helper functions
-
 pub mod build;
 pub mod cache;
 pub mod cli;
