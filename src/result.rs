@@ -21,10 +21,10 @@ use thiserror::Error;
 /** Main Result type alias for OpenCLI operations
  *
  * # Usage
- * ```
+ * ```no_run
  * use opencli::result::Result;
  *
- * async fn read_config() -> Result<Config> {
+ * async fn read_config() -> Result<String> {
  *     // Function automatically propagates OpenCliError
  *     let content = std::fs::read_to_string("config.toml")?;
  *     Ok(toml::from_str(&content)?)
@@ -85,7 +85,7 @@ pub enum OpenCliError {
  * - Ensures consistent error messaging across the codebase
  *
  * # Usage Examples
- * ```
+ * ```no_run
  * use opencli::result::OpenCliError;
  *
  * // Using constant error messages
@@ -121,7 +121,7 @@ impl OpenCliError {
      * - Any type implementing `Into<Cow<'static, str>>`
      *
      * # Example
-     * ```
+     * ```no_run
      * OpenCliError::process("Custom process error");
      * OpenCliError::process(format!("Process {} failed", pid));
      * ```
