@@ -32,7 +32,7 @@ use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 /** Manages a persistent cache of file hashes stored in a text file
  *
  * The cache file format is:
- * ```
+ * ```text
  * filename1.txt
  * argon2:hash_value_1
  * filename2.txt  
@@ -40,11 +40,11 @@ use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
  * ```
  *
  * # Example
- * ```
+ * ```no_run
  * use std::path::Path;
- * use cache_manager::CacheManager;
+ * use opencli::cache::CacheManager;
  *
- * #[tokio::main]
+ * #[tokio::main(flavor = "current_thread")]
  * async fn main() -> Result<(), Box<dyn std::error::Error>> {
  *     let cache_dir = Path::new("./cache");
  *     let cache = CacheManager::new(cache_dir);

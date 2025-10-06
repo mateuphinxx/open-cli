@@ -26,6 +26,7 @@ CLI tool for open.mp server management and Pawn project building with package ma
 - **Progress Tracking** - Real-time download and build monitoring
 - **Build Performance** - See how fast your projects compile
 - **Comprehensive Logging** - Complete activity logs for debugging
+- **AI Code Review** - Automated PR reviews with CodeRabbit AI
 
 ## Installation
 
