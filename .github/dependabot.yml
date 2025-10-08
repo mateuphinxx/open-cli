@@ -9,7 +9,7 @@ updates:
       timezone: "Etc/UTC"
     open-pull-requests-limit: 3
     assignees:
-      - "mateuphinxx"
+      - "mxp96"
     commit-message:
       prefix: "deps"
       include: "scope"

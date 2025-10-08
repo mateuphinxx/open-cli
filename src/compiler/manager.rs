@@ -67,7 +67,7 @@ impl CompilerManager {
     }
 
     async fn download_compilers_config(config_path: &Path) -> Result<CompilerConfig> {
-        const COMPILERS_CONFIG_URL: &str = "https://gist.githubusercontent.com/mateuphinxx/798edeb8da39c7997948a9432d6f61bb/raw/compilers.toml";
+        const COMPILERS_CONFIG_URL: &str = "https://gist.githubusercontent.com/mxp96/798edeb8da39c7997948a9432d6f61bb/raw/compilers.toml";
 
         let client = reqwest::Client::new();
         let response = client

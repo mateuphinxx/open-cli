@@ -1,5 +1,5 @@
 /*
- * MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
+ * MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
  * OpenCLI - Main entry point for the OpenCLI application
  *
  * This module handles:

@@ -3,18 +3,18 @@
 CLI tool for open.mp server management and Pawn project building with package management system.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Test](https://github.com/mateuphinxx/open-cli/actions/workflows/test.yml/badge.svg)](https://github.com/mateuphinxx/open-cli/actions/workflows/test.yml)
+[![Test](https://github.com/mxp96/open-cli/actions/workflows/test.yml/badge.svg)](https://github.com/mxp96/open-cli/actions/workflows/test.yml)
 
 *Inspired by [sampctl](https://github.com/Southclaws/sampctl)*
 
 ## Wiki's
-- [**Home Page**](https://github.com/mateuphinxx/open-cli/wiki)
-- [**Compiler Options**](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
+- [**Home Page**](https://github.com/mxp96/open-cli/wiki)
+- [**Compiler Options**](https://github.com/mxp96/open-cli/wiki/Compiler-Options)
 
 ## Documentation
 
-- [Package Management](https://github.com/mateuphinxx/open-cli/wiki)
-- [Compiler Options](https://github.com/mateuphinxx/open-cli/wiki/Compiler-Options)
+- [Package Management](https://github.com/mxp96/open-cli/wiki)
+- [Compiler Options](https://github.com/mxp96/open-cli/wiki/Compiler-Options)
 - [Docker Guide](docs/DOCKER.md)
 - [Contributing](docs/CONTRIBUTING.md)
 
@@ -32,7 +32,7 @@ CLI tool for open.mp server management and Pawn project building with package ma
 
 ### From Release
 
-Download the latest binary for your platform from [Releases](https://github.com/mateuphinxx/open-cli/releases).
+Download the latest binary for your platform from [Releases](https://github.com/mxp96/open-cli/releases).
 
 **Linux/macOS:**
 ```bash
@@ -47,7 +47,7 @@ Extract the ZIP and add to PATH.
 ### From Source
 
 ```bash
-git clone https://github.com/mateuphinxx/open-cli
+git clone https://github.com/mxp96/open-cli
 cd open-cli
 cargo build --release
 ```
@@ -57,8 +57,8 @@ Binary will be in `target/release/opencli`.
 ### Using Docker
 
 ```bash
-docker pull ghcr.io/mateuphinxx/open-cli:latest
-docker run --rm -v $(pwd):/workspace ghcr.io/mateuphinxx/open-cli:latest --help
+docker pull ghcr.io/mxp96/open-cli:latest
+docker run --rm -v $(pwd):/workspace ghcr.io/mxp96/open-cli:latest --help
 ```
 
 ## Quick Start
@@ -188,6 +188,6 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
 
 ## License
 
-MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
+MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
 
 See [LICENSE](LICENSE) for details.

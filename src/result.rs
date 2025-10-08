@@ -1,5 +1,5 @@
 /*
- * MIT License - Copyright (c) 2025 Matthias Theodore "mateuphinxx" Bartholomew
+ * MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
  * OpenCLI Error Handling - Comprehensive error types and utilities
  *
  * This module defines the error handling infrastructure for OpenCLI:

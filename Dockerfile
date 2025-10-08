@@ -89,8 +89,8 @@ ENV HOME=/home/opencli \
 
 LABEL org.opencontainers.image.title="OpenCLI" \
       org.opencontainers.image.description="CLI tool for open.mp server management and Pawn project building" \
-      org.opencontainers.image.authors="mateuphinxx" \
-      org.opencontainers.image.source="https://github.com/mateuphinxx/open-cli" \
+      org.opencontainers.image.authors="mxp96" \
+      org.opencontainers.image.source="https://github.com/mxp96/open-cli" \
       org.opencontainers.image.licenses="MIT"
 
 ENTRYPOINT ["opencli"]
