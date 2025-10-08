@@ -186,6 +186,16 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
 - Internet connection (first time setup)
 - open.mp server binary (for running servers)
 
+## Contributors
+
+Thanks to all contributors who made this project possible:
+
+[![Contributors](https://contrib.rocks/image?repo=mxp96/open-cli)](https://github.com/mxp96/open-cli/graphs/contributors)
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+Made with [contrib.rocks](https://contrib.rocks).
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## License
 
 MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
