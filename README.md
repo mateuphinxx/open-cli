@@ -193,7 +193,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ## License
 
-MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
+MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew.
 See [LICENSE](LICENSE) for details.
 
 > Inspired by [sampctl](https://github.com/Southclaws/sampctl)
