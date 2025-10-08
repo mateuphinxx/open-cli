@@ -1,13 +1,12 @@
 # OpenCLI
 
-CLI tool for open.mp server management and Pawn project building with package management system.
+Command-line interface (CLI) tool for Open.MP server management and Pawn project building with package management system.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Test](https://github.com/mxp96/open-cli/actions/workflows/test.yml/badge.svg)](https://github.com/mxp96/open-cli/actions/workflows/test.yml)
 
-*Inspired by [sampctl](https://github.com/Southclaws/sampctl)*
-
 ## Documentation
+
 - [Wiki Home](https://github.com/mxp96/open-cli/wiki)
 - [Package Management](https://github.com/mxp96/open-cli/wiki)
 - [Compiler Options](https://github.com/mxp96/open-cli/wiki/Compiler-Options)
@@ -195,5 +194,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 ## License
 
 MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
-
 See [LICENSE](LICENSE) for details.
+
+> Inspired by [sampctl](https://github.com/Southclaws/sampctl)
+
