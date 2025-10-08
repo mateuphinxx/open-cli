@@ -19,7 +19,7 @@ thiserror = "1.0"
 which = "6.0"
 toml = { version = "0.8", default-features = false, features = ["parse", "display"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
-octocrab = { version = "0.44.1", default-features = false, features = ["rustls", "default-client"] }
+octocrab = { version = "0.47.0", default-features = false, features = ["rustls", "default-client"] }
 zip = { version = "5.0", default-features = false, features = ["deflate"] }
 tar = { version = "0.4", default-features = false }
 flate2 = { version = "1.0", default-features = false, features = ["rust_backend"] }
