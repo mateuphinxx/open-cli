@@ -7,12 +7,8 @@ CLI tool for open.mp server management and Pawn project building with package ma
 
 *Inspired by [sampctl](https://github.com/Southclaws/sampctl)*
 
-## Wiki's
-- [**Home Page**](https://github.com/mxp96/open-cli/wiki)
-- [**Compiler Options**](https://github.com/mxp96/open-cli/wiki/Compiler-Options)
-
 ## Documentation
-
+- [Wiki Home](https://github.com/mxp96/open-cli/wiki)
 - [Package Management](https://github.com/mxp96/open-cli/wiki)
 - [Compiler Options](https://github.com/mxp96/open-cli/wiki/Compiler-Options)
 - [Docker Guide](docs/DOCKER.md)
