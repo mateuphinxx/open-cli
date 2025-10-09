@@ -187,9 +187,9 @@ Thanks to all contributors who made this project possible:
 
 [![Contributors](https://contrib.rocks/image?repo=mxp96/open-cli)](https://github.com/mxp96/open-cli/graphs/contributors)
 
-<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- CONTRIBUTORS-LIST:START -->
 Made with [contrib.rocks](https://contrib.rocks).
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+<!-- CONTRIBUTORS-LIST:END -->
 
 ## License
 

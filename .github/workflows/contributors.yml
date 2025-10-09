@@ -30,23 +30,13 @@ jobs:
 
       - name: Update contributors
         uses: akhilmhdh/contributors-readme-action@v2.3.10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          filename: README.md
-          placeholder: "<!-- CONTRIBUTORS-LIST:START -->"
-          placeholder_end: "<!-- CONTRIBUTORS-LIST:END -->"
+          readme_path: README.md
           columns_per_row: 6
           collaborators: true
-          contributor_list: true
           use_username: false
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "docs: update contributors list [skip ci]"
-            git push
-          fi
+          commit_message: "docs: update contributors list [skip ci]"
+          committer_username: "github-actions[bot]"
+          committer_email: "github-actions[bot]@users.noreply.github.com"
