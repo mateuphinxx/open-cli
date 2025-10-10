@@ -7,7 +7,7 @@ def main():
     print("Formatting Rust code...")
 
     try:
-        # Run the Rust formatter (cargo fmt) cross all packages and modules
+        # Run the Rust formatter (cargo fmt) across all packages and modules
         # Equivalent to: `cargo fmt --all`
         subprocess.run("cargo fmt --all", shell=True, check=True)
 
