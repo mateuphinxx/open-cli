@@ -5,34 +5,34 @@ import sys
 def main():
     print()
     print("========================================")
-    print("Menjalankan Pengujian")
+    print("Running Tests")
     print("========================================")
     print()
 
-    # Menjalankan unit test menggunakan Cargo
-    print("Menjalankan unit test...")
+    # Run unit tests using Cargo
+    print("Running unit tests...")
     try:
-        # Menjalankan perintah cargo test dengan mode rilis dan output detail
+        # Execute Cargo test command in release mode with verbose output
         subprocess.run("cargo test --release --verbose", shell=True, check=True)
     except subprocess.CalledProcessError:
-        # Jika ada error saat menjalankan test, tampilkan pesan error
+        # If any test fails, display error message and exit
         print()
         print("========================================")
-        print("[ERROR] Pengujian gagal!")
+        print("[ERROR] Tests failed!")
         print("========================================")
         sys.exit(1)
 
-    # Jika semua test berhasil
+    # If all tests pass successfully
     print()
     print("========================================")
-    print("[SUKSES] Semua pengujian berhasil!")
+    print("[SUCCESS] All tests passed!")
     print("========================================")
 
 if __name__ == "__main__":
     try:
-        # Menjalankan fungsi utama
+        # Execute the main function
         main()
     except KeyboardInterrupt:
-        # Menangani interupsi dari pengguna (Ctrl + C)
-        print("\n[DIBATALKAN] Dihentikan oleh pengguna")
+        # Handle user interruption (Ctrl + C)
+        print("\n[ABORTED] User interrupted")
         sys.exit(1)
