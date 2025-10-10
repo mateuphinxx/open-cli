@@ -16,12 +16,12 @@ def main():
         "integration",
     ]
 
-    # Membuat direktori skenario
+    # Create scenario directories
     for name in scenario_names:
         dir_path = base_dir / name
         dir_path.mkdir(parents=True, exist_ok=True)
 
-    # Membuat file sample gamemode.pwn di setiap direktori
+    # Create a sample gamemode.pwn file in each directory
     for dir_path in base_dir.iterdir():
         if dir_path.is_dir():
             file_path = dir_path / "gamemode.pwn"
@@ -39,4 +39,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"[ERROR] {e}")
         sys.exit(1)
-
