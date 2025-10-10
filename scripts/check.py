@@ -4,20 +4,20 @@ import sys
 
 def run_command(command, description, success_msg, error_msg, fix_hint=None):
     """
-    Menjalankan perintah shell dan menampilkan hasilnya.
-    Jika perintah gagal, tampilkan pesan error dan keluar dari program.
+    Executes a shell command and displays status messages.
+    If the command fails, prints an error message and exits the program.
     """
     print(description)
     try:
-        # Jalankan perintaj shell
+        # Run the given shell command
         subprocess.run(command, shell=True, check=True)
         print(success_msg)
     except subprocess.CalledProcessError:
-        # Jika gagal, tampilkan pesan error dan saran perbaikan (jika ada)
+        # If command fails, show error and optional fix instructions
         print(error_msg)
         if fix_hint:
             print()
-            print("Jalankan perintah ini untuk memperbaiki:")
+            print("Run this to fix:")
             print(f"  {fix_hint}")
         sys.exit(1)
     print()
@@ -25,45 +25,45 @@ def run_command(command, description, success_msg, error_msg, fix_hint=None):
 def main():
     print()
     print("========================================")
-    print("Memeriksa Kualitas Kode")
+    print("Checking Code Quality")
     print("========================================")
     print()
 
-    # [1/3] Periksa format kode
+    # [1/3] Check code formatting
     run_command(
         "cargo fmt --all -- --check",
-        "[1/3] Memeriksa format kode...",
-        "[OK] Format kode sudah benar",
-        "[ERROR] Format kode belum benar",
-        "cargo fmt --all\n  atau: ./scripts/format.sh"
+        "[1/3] Checking code formatting...",
+        "[OK] Code formatting is correct",
+        "[ERROR] Code is not formatted correctly",
+        "cargo fmt --all\n  or: ./scripts/format.sh"
     )
 
-    # [2/3] Jalankan linter Clippy
+    # [2/3] Run Clippy linter
     run_command(
         "cargo clippy --all-targets --all-features -- -D warnings",
-        "[2/3] Menjalankan Clippy linter...",
-        "[OK] Tidak ada peringatan dari Clippy",
-        "[ERROR] Ditemukan masalah oleh Clippy"
+        "[2/3] Running Clippy linter...",
+        "[OK] No Clippy warnings",
+        "[ERROR] Clippy found issues"
     )
 
-    # [3/3] Periksa kompilasi kode
+    # [3/3] Check compilation
     run_command(
         "cargo check --all-targets --all-features",
-        "[3/3] Memeriksa kompilasi kode...",
-        "[OK] Kompilasi berhasil",
-        "[ERROR] Gagal dalam pemeriksaan kompilasi"
+        "[3/3] Checking compilation...",
+        "[OK] Code compiles successfully",
+        "[ERROR] Compilation check failed"
     )
 
     print("========================================")
-    print("[SUKSES] Semua pemeriksaan berhasil!")
+    print("[SUCCESS] All checks passed!")
     print("========================================")
     print()
 
 if __name__ == "__main__":
     try:
-        # Jalankan fungsi utama
+        # Execute the main function
         main()
     except KeyboardInterrupt:
-        # Tangani interupsi pengguna (Ctrl + C)
-        print("\n[DIBATALKAN] Dihentikan oleh pengguna")
+        # Handle user interruption (Ctrl + C)
+        print("\n[ABORTED] User interrupted")
         sys.exit(1)
