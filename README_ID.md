@@ -24,7 +24,7 @@ Command-line interface (CLI) tool untuk [Open.MP](https://open.mp/) Manajemen Se
 
 ## Installasi
 
-### dari Release
+### Dari Release
 
 Download binary terbaru untuk platform Anda dari [Releases](https://github.com/mxp96/open-cli/releases).
 
@@ -38,7 +38,7 @@ opencli --version
 **Windows:**
 Ekstrak ZIP dan tambahkan ke PATH.
 
-### dari Source
+### Dari Source
 
 ```bash
 git clone https://github.com/mxp96/open-cli
@@ -48,7 +48,7 @@ cargo build --release
 
 Binary akan berada di `target/release/opencli`.
 
-### menggunakan Docker
+### Menggunakan Docker
 
 ```bash
 docker pull ghcr.io/mxp96/open-cli:latest
