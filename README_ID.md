@@ -36,9 +36,9 @@ opencli --version
 ```
 
 **Windows:**
-Extract the ZIP and add to PATH.
+Ekstrak ZIP dan tambahkan ke PATH.
 
-### From Source
+### dari Source
 
 ```bash
 git clone https://github.com/mxp96/open-cli
@@ -46,7 +46,7 @@ cd open-cli
 cargo build --release
 ```
 
-Binary will be in `target/release/opencli`.
+Binary akan berada di `target/release/opencli`.
 
 ### Using Docker
 
@@ -55,7 +55,7 @@ docker pull ghcr.io/mxp96/open-cli:latest
 docker run --rm -v $(pwd):/workspace ghcr.io/mxp96/open-cli:latest --help
 ```
 
-## Quick Start
+## Mulai Cepat
 
 ```bash
 # Setup new project
@@ -91,37 +91,37 @@ opencli package install Y-Less/sscanf --target components
 opencli package install "Y-Less/sscanf=^2.13.7"
 ```
 
-### Manage Packages
+### Kelola Paket
 
 ```bash
-# List installed packages
+# Daftar paket yang terinstal
 opencli package list
 
-# Remove package
+# Hapus paket
 opencli package remove Y-Less/sscanf
 
-# Update packages
+# Perbarui paket
 opencli package update Y-Less/sscanf
 opencli package update --all
 
-# Check integrity
+# Periksa integritas
 opencli package check
 ```
 
-### Version Constraints
+### Batasan Versi
 
 ```toml
 [packages]
-"owner/repo" = "^x.y.z"              # Compatible updates
-"owner/repo" = "~x.y.z"              # Patch updates only
-"owner/repo" = ">=x.y.z, <a.b.c"     # Range constraint
-"owner/repo" = "latest"              # Always latest
-"owner/repo" = "x.y.z"               # Exact version
+"owner/repo" = "^x.y.z"              # Pembaruan yang kompatibel
+"owner/repo" = "~x.y.z"              # Hanya pembaruan patch
+"owner/repo" = ">=x.y.z, <a.b.c"     # Batasan jangkauan
+"owner/repo" = "latest"              # Selalu terbaru
+"owner/repo" = "x.y.z"               # Versi persisnya
 ```
 
-## Configuration
+## Konfigurasi
 
-Create `opencli.toml` with `opencli setup`:
+Buat `opencli.toml` dengan `opencli setup`:
 
 ```toml
 [build]
@@ -139,7 +139,7 @@ args = ["-d3", "-;+", "-(+", "-\\+", "-Z+"]
 "Y-Less/sscanf" = { version = "^2.13.8", target = "components" }
 ```
 
-## Building
+## Membangun
 
 ```bash
 # Default build
@@ -155,12 +155,12 @@ opencli build --force-download
 opencli build --update-config
 ```
 
-## Development
+## Pengembangan
 
 ```bash
 # Format code
 cargo fmt --all
-make docker-format  # Using Docker
+make docker-format  # Menggunakan Docker
 
 # Run linter
 cargo clippy --all-targets --all-features
@@ -172,28 +172,28 @@ cargo test --release
 docker compose up dev
 ```
 
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
+Lihat [CONTRIBUTING.md](docs/CONTRIBUTING.md) untuk lebih jelasnya.
 
-## Requirements
+## Persyaratan
 
-- Rust 1.89.0+ (for building from source)
-- Internet connection (first time setup)
-- open.mp server binary (for running servers)
+- Rust 1.89.0+ (untuk membangun dari source)
+- Internet connection (awal pertama setup)
+- open.mp server binary (untuk menjalankan server)
 
 ## Contributors
 
-Thanks to all contributors who made this project possible:
+Terima kasih kepada semua pihak yang telah berkontribusi sehingga proyek ini bisa terlaksana:
 
 [![Contributors](https://contrib.rocks/image?repo=mxp96/open-cli)](https://github.com/mxp96/open-cli/graphs/contributors)
 
 <!-- CONTRIBUTORS-LIST:START -->
-Made with [contrib.rocks](https://contrib.rocks).
+Dibuat oleh [contrib.rocks](https://contrib.rocks).
 <!-- CONTRIBUTORS-LIST:END -->
 
-## License
+## Lisensi
 
 MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew.
-See [LICENSE](LICENSE) for details.
+Lihat [LICENSE](LICENSE) untuk selengkapnya.
+- Indonesian/ID mantainer: klantle. 
 
 > Inspired by [sampctl](https://github.com/Southclaws/sampctl)
-> Indonesian/ID mantainer: klantle. 
