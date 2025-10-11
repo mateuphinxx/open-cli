@@ -48,7 +48,7 @@ cargo build --release
 
 Binary akan berada di `target/release/opencli`.
 
-### Using Docker
+### menggunakan Docker
 
 ```bash
 docker pull ghcr.io/mxp96/open-cli:latest
@@ -58,36 +58,36 @@ docker run --rm -v $(pwd):/workspace ghcr.io/mxp96/open-cli:latest --help
 ## Mulai Cepat
 
 ```bash
-# Setup new project
+# Siapkan proyek baru
 opencli setup
 
-# Install Pawn compiler
+# Instal kompiler Pawn
 opencli install compiler
 
-# Install packages
+# Instal paket
 opencli package install Y-Less/sscanf
 
-# Build project
+# Bangun proyek
 opencli build
 
-# Run server
+# Jalankan server
 opencli run
 ```
 
 ## Package Management
 
-### Install Packages
+### Instal Paket
 
 ```bash
-# Install all packages from opencli.toml
+# Instal semua paket dari opencli.toml
 opencli package install
 
-# Install specific package
+# Instal paket tertentu
 opencli package install Y-Less/sscanf
 opencli package install "Y-Less/sscanf=2.13.8"
 opencli package install Y-Less/sscanf --target components
 
-# With version constraints
+# Dengan batasan versi
 opencli package install "Y-Less/sscanf=^2.13.7"
 ```
 
@@ -142,33 +142,33 @@ args = ["-d3", "-;+", "-(+", "-\\+", "-Z+"]
 ## Membangun
 
 ```bash
-# Default build
+# Bangunan bawaan
 opencli build
 
-# Verbose output
+# Output verbose
 opencli build --verbose
 
-# Force compiler re-download
+# Paksa pengunduhan ulang kompiler
 opencli build --force-download
 
-# Update compiler config
+# Perbarui konfigurasi kompiler
 opencli build --update-config
 ```
 
 ## Pengembangan
 
 ```bash
-# Format code
+# Format kode
 cargo fmt --all
 make docker-format  # Menggunakan Docker
 
-# Run linter
+# Jalankan linter
 cargo clippy --all-targets --all-features
 
-# Run tests
+# Jalankan pengujian
 cargo test --release
 
-# Docker development
+# Pengembangan Docker
 docker compose up dev
 ```
 
@@ -180,7 +180,7 @@ Lihat [CONTRIBUTING.md](docs/CONTRIBUTING.md) untuk lebih jelasnya.
 - Internet connection (awal pertama setup)
 - open.mp server binary (untuk menjalankan server)
 
-## Contributors
+## Kontributor
 
 Terima kasih kepada semua pihak yang telah berkontribusi sehingga proyek ini bisa terlaksana:
 
@@ -194,6 +194,6 @@ Dibuat oleh [contrib.rocks](https://contrib.rocks).
 
 MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew.
 Lihat [LICENSE](LICENSE) untuk selengkapnya.
-- Indonesian/ID mantainer: klantle. 
+- [x] Indonesian/ID mantainer: klantle. 
 
-> Inspired by [sampctl](https://github.com/Southclaws/sampctl)
+> Terinspirasi oleh [sampctl](https://github.com/Southclaws/sampctl)
