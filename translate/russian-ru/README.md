@@ -194,5 +194,6 @@ docker compose up dev
 
 Лицензия MIT — Авторское право (c) 2025 Маттиас Теодор "mxp96" Бартоломью.
 Подробнее см. в файле [LICENSE](LICENSE).
+- [x] Russian/RU mantainer: klantle.
 
 > Вдохновлено [sampctl](https://github.com/Southclaws/sampctl)
