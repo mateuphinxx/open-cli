@@ -1,6 +1,6 @@
 # OpenCLI
 
-Интерфейс командной строки (CLI) для управления сервером [Open.MP](https://open.mp/) и сборки Pawn-проектов с системой управления пакетами.
+Интерфейс командной строки (CLI) для управления сервером [open.mp](https://open.mp/) и сборки Pawn-проектов с системой управления пакетами.
 
 [![Лицензия: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Тесты](https://github.com/mxp96/open-cli/actions/workflows/test.yml/badge.svg)](https://github.com/mxp96/open-cli/actions/workflows/test.yml)
