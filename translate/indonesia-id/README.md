@@ -1,6 +1,6 @@
 # OpenCLI
 
-Command-line interface (CLI) tool untuk [Open.MP](https://open.mp/) Manajemen Server dan Pawn project building dengan sistem package management.
+Command-line interface (CLI) tool untuk [open.mp](https://open.mp/) Manajemen Server dan Pawn project building dengan sistem package management.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Test](https://github.com/mxp96/open-cli/actions/workflows/test.yml/badge.svg)](https://github.com/mxp96/open-cli/actions/workflows/test.yml)
