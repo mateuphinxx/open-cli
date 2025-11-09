@@ -192,8 +192,6 @@ Dibuat oleh [contrib.rocks](https://contrib.rocks).
 
 ## Lisensi
 
-MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew.
 Lihat [LICENSE](LICENSE) untuk selengkapnya.
-- [x] Indonesian/ID mantainer: klantle. 
 
 > Terinspirasi oleh [sampctl](https://github.com/Southclaws/sampctl)
