@@ -1,5 +1,4 @@
-/// MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
-/// Argon Build System - A secure, cache-optimized build system
+/// OpenCLI - A secure, cache-optimized build system
 ///
 /// This crate provides a comprehensive build system with focus on:
 /// - Security through cryptographic hashing (Argon2)

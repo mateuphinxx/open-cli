@@ -1,20 +1,3 @@
-/*
- * MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
- * OpenCLI Error Handling - Comprehensive error types and utilities
- *
- * This module defines the error handling infrastructure for OpenCLI:
- * - Custom error types with thiserror for rich error messages
- * - Type alias for simplified Result handling
- * - Common error constants and constructor utilities
- * - Support for both static and dynamic error messages
- *
- * Features:
- * - Automatic error conversion from common libraries (std::io, toml, serde_json)
- * - Cow<'static, str> for efficient string handling
- * - Categorized error types for different application domains
- * - Consistent error reporting across all modules
- */
-
 use std::borrow::Cow;
 use thiserror::Error;
 

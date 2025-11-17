@@ -1,27 +1,3 @@
-/*
- * MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
- * CacheManager - A file-based cache system for storing and retrieving file hashes
- *
- * This module provides a persistent cache storage for file hashes using a simple
- * text-based format. Each cache entry consists of two lines:
- * - Filename
- * - Hash in format "argon2:actual_hash"
- *
- * Features:
- * - Thread-safe async operations using Tokio
- * - Atomic operations with file locking
- * - Cache integrity validation and repair
- * - Efficient bulk operations
- * - Duplicate detection
- * - Memory-efficient streaming for large cache files
- *
- * Use cases:
- * - Storing cryptographic hashes of processed files
- * - Tracking file modifications through hash changes
- * - Building dependency tracking systems
- * - Cache invalidation based on file content changes
- */
-
 use crate::result::{OpenCliError, Result};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};

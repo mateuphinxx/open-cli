@@ -1,20 +1,3 @@
-/*
- * MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
- * OpenCLI - Main entry point for the OpenCLI application
- *
- * This module handles:
- * - Command line argument parsing using Clap
- * - Logging initialization with file-based output
- * - Application configuration directory management
- * - Error handling and graceful shutdown
- *
- * Features:
- * - Async runtime with current_thread flavor for efficiency
- * - Persistent logging to platform-specific config directories
- * - Robust error handling with proper exit codes
- * - Modular command execution architecture
- */
-
 use clap::Parser;
 use dirs::config_dir;
 use env_logger::Builder;

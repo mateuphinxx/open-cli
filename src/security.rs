@@ -1,25 +1,3 @@
-/*
- * MIT License - Copyright (c) 2025 Matthias Theodore "mxp96" Bartholomew
- * SecurityManager - Cryptographic operations for file integrity and verification
- *
- * This module provides secure hashing and verification capabilities using:
- * - SHA-256 for fast file content hashing
- * - Argon2 for secure password hashing of file hashes
- * - Salt generation using cryptographically secure RNG
- *
- * Security Features:
- * - Defense against rainbow table attacks through salting
- * - Memory-hard Argon2 algorithm for brute-force resistance
- * - Secure random number generation for salt creation
- * - Protection against timing attacks in verification
- *
- * Use Cases:
- * - File integrity verification and change detection
- * - Secure storage of file hashes in cache
- * - Content-based deduplication
- * - Tamper detection for critical files
- */
-
 use crate::result::{OpenCliError, Result};
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
